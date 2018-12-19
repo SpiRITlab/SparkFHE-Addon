@@ -4,6 +4,7 @@
 GMP_Version=gmp-6.1.2
 GF2X_Version=gf2x-1.2
 NTL_Version=ntl-11.3.0
+SWIG_Version=swig-3.0.12
 BOOST_Version=boost_1_68_0
 
 # init
