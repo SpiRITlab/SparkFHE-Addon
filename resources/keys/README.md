@@ -1,1 +1,1 @@
-Encryption and decryption keys will be generated in this folder.
+Encryption and decryption keys supplied by users

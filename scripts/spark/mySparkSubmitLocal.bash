@@ -6,13 +6,13 @@
 # uncomment the following if verbose mode is needed
 #verbose="--verbose"
 
-ProjectRoot=..
+ProjectRoot=../..
 cd $ProjectRoot
 
 master=local
 deploy_mode=client
 
-ivysettings_file=resources/ivysettings.xml
+ivysettings_file=SparkFHE-Addon/resources/ivysettings.xml
 jar_sparkfhe_examples=jars/$(ls jars | grep sparkfhe-examples-)
 jar_sparkfhe_api=jars/$(ls jars | grep sparkfhe-api-)
 jar_sparkfhe_plugin=jars/$(ls jars | grep spark-fhe)
