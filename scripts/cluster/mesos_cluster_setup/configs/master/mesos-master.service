@@ -1,0 +1,11 @@
+[Unit]
+Description=Mesos Master Service
+After=zookeeper.service
+Requires=zookeeper.service
+
+[Service]
+ExecStart=/usr/local/sbin/mesos-master --ip=masterIP --work_dir=/var/lib/mesos --zk=file://etc/mesos-master/zk --quorum=1 --cluster=sparkmesos
+
+[Install]
+WantedBy=multi-user.target
+
