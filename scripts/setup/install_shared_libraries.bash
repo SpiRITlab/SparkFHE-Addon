@@ -8,7 +8,7 @@ SWIG_Version=swig-3.0.12
 BOOST_Version=boost_1_68_0
 
 # init
-PROJECT_ROOT_PATH=`pwd`/"../.."
+PROJECT_ROOT_PATH=`pwd`/"../../../"
 DEPS_PATH="$PROJECT_ROOT_PATH/shared_libraries"
 libSparkFHE_root=$PROJECT_ROOT_PATH/libSparkFHE
 libSparkFHE_include=$PROJECT_ROOT_PATH/libSparkFHE/include
