@@ -57,7 +57,10 @@ function run_spark_submit_command() {
 }
 
 # avoid using hadoop for storage
-unset HADOOP_CONF_DIR
+HADOOP_CONF_DIR=`echo $HADOOP_CONF_DIR`
+if [ "$HADOOP_CONF_DIR" != "" ] ; then
+    unset HADOOP_CONF_DIR
+fi
 
 # increase the size of the vm
 export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m"
@@ -78,6 +81,12 @@ run_spark_submit_command  sparkfhe_basic_examples  spiritlab.sparkfhe.example.ba
 run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample 4 "gen/keys/my_public_key.txt" "gen/keys/my_secret_key.txt"   "gen/records/$(ls gen/records | grep vec_a)" "gen/records/$(ls gen/records | grep vec_b)"
 
 
+
+
+# put back the environment variable
+if [ "$HADOOP_CONF_DIR" != "" ] ; then
+    export HADOOP_CONF_DIR="$HADOOP_CONF_DIR"
+fi
 
 
 
