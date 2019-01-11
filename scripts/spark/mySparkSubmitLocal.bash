@@ -33,9 +33,7 @@ function run_spark_submit_command() {
 		--name $spark_job_name \
 		--master $master \
 		--deploy-mode $deploy_mode \
-		--executor-memory $executor_memory \
-	    --total-executor-cores $total_executor_cores \
-	    --driver-class-path $java_class_path \
+	        --driver-class-path $java_class_path \
 		--class $main_class_to_run \
 		--jars $jar_sparkfhe_api,$jar_sparkfhe_plugin \
 		--conf spark.jars.ivySettings="$ivysettings_file" \
