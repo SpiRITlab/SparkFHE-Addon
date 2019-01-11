@@ -2,6 +2,11 @@
 
 # run this script on the master node
 
+if [ "$#" -eq 0 ]; then
+    echo "bash mySparkSubmitCluster.bash MASTER_NODE_IP_ADDR"
+    exit
+fi
+
 # uncomment the following if verbose mode is needed
 #verbose="--verbose"
 
@@ -11,7 +16,7 @@ cd $ProjectRoot
 SparkFHE_Addon_name="SparkFHE-Addon"
 
 #TODO write code to determine whether the master URL is correct
-master=mesos://128.105.144.20:7077 
+master=mesos://$1:7077
 
 
 deploy_mode=cluster
@@ -51,7 +56,10 @@ function run_spark_submit_command() {
 		$jar_sparkfhe_examples $3 $4 $5 $6 $7
 }
 
+# avoid using hadoop for storage
+unset HADOOP_CONF_DIR
 
+# increase the size of the vm
 export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m"
 
 # run basic operations without SparkFHE stuffs
