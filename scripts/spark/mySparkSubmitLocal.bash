@@ -33,7 +33,7 @@ function run_spark_submit_command() {
 		--name $spark_job_name \
 		--master $master \
 		--deploy-mode $deploy_mode \
-	        --driver-class-path $java_class_path \
+	    --driver-class-path $java_class_path \
 		--class $main_class_to_run \
 		--jars $jar_sparkfhe_api,$jar_sparkfhe_plugin \
 		--conf spark.jars.ivySettings="$ivysettings_file" \
@@ -47,7 +47,10 @@ function run_spark_submit_command() {
 }
 
 # avoid using hadoop for storage
-unset HADOOP_CONF_DIR
+HADOOP_CONF_DIR=`echo $HADOOP_CONF_DIR`
+if [ "$HADOOP_CONF_DIR" != "" ] ; then
+    unset HADOOP_CONF_DIR
+fi
 
 # increase the size of the vm
 export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m"
@@ -71,6 +74,10 @@ run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.exam
 
 
 
+# put back the environment variable
+if [ "$HADOOP_CONF_DIR" != "" ] ; then
+    export HADOOP_CONF_DIR="$HADOOP_CONF_DIR"
+fi
 
 
 

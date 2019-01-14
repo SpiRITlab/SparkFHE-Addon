@@ -3,7 +3,7 @@
 # run this script on the master node
 
 if [ "$#" -eq 0 ]; then
-    echo "bash mySparkSubmitCluster.bash MASTER_NODE_IP_ADDR"
+    echo "bash mySparkSubmitCluster.bash [mesos://MASTER_NODE_IP_ADDR:7077 | yarn]"
     exit
 fi
 
@@ -15,9 +15,7 @@ cd $ProjectRoot
 
 SparkFHE_Addon_name="SparkFHE-Addon"
 
-#TODO write code to determine whether the master URL is correct
-master=mesos://$1:7077
-
+master=$1
 
 deploy_mode=cluster
 executor_memory=1G
@@ -57,7 +55,10 @@ function run_spark_submit_command() {
 }
 
 # avoid using hadoop for storage
-unset HADOOP_CONF_DIR
+HADOOP_CONF_DIR=`echo $HADOOP_CONF_DIR`
+if [ "$HADOOP_CONF_DIR" != "" ] ; then
+    unset HADOOP_CONF_DIR
+fi
 
 # increase the size of the vm
 export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m"
@@ -78,6 +79,12 @@ run_spark_submit_command  sparkfhe_basic_examples  spiritlab.sparkfhe.example.ba
 run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample 4 "gen/keys/my_public_key.txt" "gen/keys/my_secret_key.txt"   "gen/records/$(ls gen/records | grep vec_a)" "gen/records/$(ls gen/records | grep vec_b)"
 
 
+
+
+# put back the environment variable
+if [ "$HADOOP_CONF_DIR" != "" ] ; then
+    export HADOOP_CONF_DIR="$HADOOP_CONF_DIR"
+fi
 
 
 
