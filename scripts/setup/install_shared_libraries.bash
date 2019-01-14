@@ -6,6 +6,7 @@ GF2X_Version=gf2x-1.2
 NTL_Version=ntl-11.3.0
 SWIG_Version=swig-3.0.12
 BOOST_Version=boost_1_68_0
+ARMADILLO_Version=armadillo-9.200.6
 
 # init
 PROJECT_ROOT_PATH=`pwd`/"../../../"
@@ -118,19 +119,33 @@ if [ ! -d $NTL ]; then
     cd ../..
 fi
 
+# download and install ARMADILLO
+if [ ! -d $ARMADILLO ]; then
+    echo "Installing $ARMADILLO..."
+    wget https://sourceforge.net/projects/arma/files/$ARMADILLO_Version.tar.xz
+    tar xf $ARMADILLO_Version.tar.xz
+    rm $ARMADILLO_Version.tar.xz
+    mv $ARMADILLO_Version $ARMADILLO
+    cd $ARMADILLO
+    cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    make; make install
+    echo "Installing $ARMADILLO... (DONE)"
+    cd ..
+fi
 
 # download and compile HElib
 HElib="HElib"
 if [ ! -d $HElib ]; then
     echo "Installing $HElib..."
     git clone https://github.com/shaih/HElib.git $HElib
-    cd $HElib/src;
+    cd $HElib;
+    cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
     mkdir -p $libSparkFHE_include/HElib/
-    cp *.h $libSparkFHE_include/HElib/
-    cp fhe.a $libSparkFHE_lib/libfhe.a
+    cp src/*.h $libSparkFHE_include/HElib/
+    cp lib/libfhe.a $libSparkFHE_lib/libfhe.a
     echo "Installing $HElib... (DONE)"
-    cd ../..
+    cd ..
 fi
 
 # download and install SEAL; due to copyright reason we can automatically fetch the package.
