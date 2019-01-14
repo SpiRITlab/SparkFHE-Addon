@@ -3,7 +3,7 @@
 # run this script on the master node
 
 if [ "$#" -eq 0 ]; then
-    echo "bash mySparkSubmitCluster.bash MASTER_NODE_IP_ADDR"
+    echo "bash mySparkSubmitCluster.bash [mesos://MASTER_NODE_IP_ADDR:7077 | yarn]"
     exit
 fi
 
@@ -15,9 +15,7 @@ cd $ProjectRoot
 
 SparkFHE_Addon_name="SparkFHE-Addon"
 
-#TODO write code to determine whether the master URL is correct
-master=mesos://$1:7077
-
+master=$1
 
 deploy_mode=cluster
 executor_memory=1G
