@@ -120,6 +120,7 @@ if [ ! -d $NTL ]; then
 fi
 
 # download and install ARMADILLO
+ARMADILLO="ARMADILLO"
 if [ ! -d $ARMADILLO ]; then
     echo "Installing $ARMADILLO..."
     wget https://sourceforge.net/projects/arma/files/$ARMADILLO_Version.tar.xz
@@ -138,7 +139,7 @@ HElib="HElib"
 if [ ! -d $HElib ]; then
     echo "Installing $HElib..."
     git clone https://github.com/shaih/HElib.git $HElib
-    cd $HElib;
+    cd $HElib
     cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
     mkdir -p $libSparkFHE_include/HElib/
