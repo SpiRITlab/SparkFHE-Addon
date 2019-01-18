@@ -5,15 +5,15 @@
 
 
 # Starting installation of needed dependancies and software
-echo Homebrew is needed, please make sure it is installed
+echo "Homebrew is needed, please make sure it is installed"
 brew update
 
 # install mac commandline tools
-echo instalilng mac commandline tools (may ask for password)
+echo "Instalilng mac commandline tools (may ask for password)"
 xcode-select --install
 
 # The current version of gcc that homebrew installs is 8.2.0
-echo Installing correct gcc version (8.2.0)
+echo "Installing correct gcc version (8.2.0)"
 brew install gcc@8 pcre cmake maven
 brew tap caskroom/versions
 brew cask install java8
