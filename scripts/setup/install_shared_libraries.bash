@@ -8,6 +8,13 @@ SWIG_Version=swig-3.0.12
 BOOST_Version=boost_1_68_0
 ARMADILLO_Version=armadillo-9.200.6
 
+# exit when any command fails
+set -e
+# keep track of the last executed command
+trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+# echo an error message before exiting
+trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
+
 # init
 PROJECT_ROOT_PATH=`pwd`/"../../../"
 DEPS_PATH="$PROJECT_ROOT_PATH/shared_libraries"
