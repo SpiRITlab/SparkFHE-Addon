@@ -145,8 +145,9 @@ fi
 HElib="HElib"
 if [ ! -d $HElib ]; then
     echo "Installing $HElib..."
-    git clone https://github.com/shaih/HElib.git $HElib
+    git clone https://github.com/SpiRITlab/HElib.git $HElib
     cd $HElib
+    git checkout master-SparkFHE
     cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
     mkdir -p $libSparkFHE_include/HElib/
@@ -156,22 +157,19 @@ if [ ! -d $HElib ]; then
     cd ..
 fi
 
-# download and install SEAL; due to copyright reason we can automatically fetch the package.
-# download from here, https://www.microsoft.com/en-us/research/project/simple-encrypted-arithmetic-library/
-# place the folder into deps and rename to "SEAL"
-#SEAL="SEAL"
-#if [ -d $SEAL ]; then
-#    echo "Installing $SEAL..."
-#    cd $SEAL/$SEAL
-#    cmake .
-#    make
-#    echo "Installing $SEAL... (DONE)"
-#    cd ../..
-#else
-#    echo "Please download Seal from https://www.microsoft.com/en-us/research/project/simple-encrypted-arithmetic-library/ "
-#    echo "and put and rename the library to deps/SEAL before continue."
-#    exit
-#fi
+# download and compile SEAL
+SEAL="SEAL"
+if [ ! -d $SEAL ]; then
+   echo "Installing $SEAL..."
+   git clone https://github.com/SpiRITlab/SEAL.git $SEAL
+   cd $SEAL
+   git checkout master-SparkFHE
+   cd src
+   cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+   make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
+   echo "Installing $SEAL... (DONE)"
+   cd ../..
+fi
 
 #PALISADE="PALISADE"
 #if [ ! -d $PALISADE ]; then
@@ -200,8 +198,6 @@ fi
 #    cd ..
 #fi
 
-
-cd $PROJECT_ROOT_PATH
 
 
 
