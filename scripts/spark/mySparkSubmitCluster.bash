@@ -22,6 +22,7 @@ executor_memory=1G
 total_executor_cores=30
 
 ivysettings_file=$SparkFHE_Addon_name/resources/config/ivysettings.xml
+log4j_file=$SparkFHE_Addon_name/resources/config/log4j.properties
 jar_sparkfhe_examples=examples/jars/$(ls examples/jars | grep sparkfhe-examples-)
 jar_sparkfhe_api=jars/$(ls jars | grep sparkfhe-api-)
 jar_sparkfhe_plugin=jars/$(ls jars | grep spark-fhe)
@@ -40,15 +41,16 @@ function run_spark_submit_command() {
 		--master $master \
 		--deploy-mode $deploy_mode \
 		--executor-memory $executor_memory \
-	    --total-executor-cores $total_executor_cores \
-	    --driver-class-path $java_class_path \
+		--total-executor-cores $total_executor_cores \
+		--driver-class-path $java_class_path \
 		--class $main_class_to_run \
 		--jars $jar_sparkfhe_api,$jar_sparkfhe_plugin \
+		--conf spark.master.rest.enabled=true \
 		--conf spark.jars.ivySettings="$ivysettings_file" \
 		--conf spark.driver.userClassPathFirst=true \
 		--conf spark.driver.extraClassPath="$java_class_path" \
 		--conf spark.driver.extraLibraryPath="$libSparkFHE_path" \
-		--conf spark.driver.extraJavaOptions="-Djava.library.path=$libSparkFHE_path"  \
+		--conf spark.driver.extraJavaOptions="-Djava.library.path=$libSparkFHE_path -Dlog4j.configuration=$log4j_file"  \
 		--conf spark.executor.extraClassPath="$java_class_path" \
 		--conf spark.executor.extraLibraryPath="$libSparkFHE_path" \
 		$jar_sparkfhe_examples $3 $4 $5 $6 $7

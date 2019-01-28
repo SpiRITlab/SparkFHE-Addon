@@ -8,6 +8,13 @@ SWIG_Version=swig-3.0.12
 BOOST_Version=boost_1_68_0
 ARMADILLO_Version=armadillo-9.200.6
 
+# exit when any command fails
+set -e
+# keep track of the last executed command
+trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+# echo an error message before exiting
+trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
+
 # init
 Marker=SparkFHE_succeded
 PROJECT_ROOT_PATH=`pwd`/"../../../"
@@ -142,8 +149,9 @@ download_and_install_armadillo(){
 
 download_and_install_helib(){
     echo "Installing $HElib..."
-    git clone https://github.com/shaih/HElib.git $HElib
+    git clone https://github.com/SpiRITlab/HElib.git $HElib
     cd $HElib
+    git checkout master-SparkFHE
     cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
     mkdir -p $libSparkFHE_include/HElib/
@@ -307,6 +315,7 @@ fi
 #    exit
 # fi
 
+
 #PALISADE="PALISADE"
 #if [ ! -d $PALISADE ]; then
 #    echo "Installing $PALISADE..."
@@ -334,8 +343,6 @@ fi
 #    cd ..
 #fi
 
-
-cd $PROJECT_ROOT_PATH
 
 
 
