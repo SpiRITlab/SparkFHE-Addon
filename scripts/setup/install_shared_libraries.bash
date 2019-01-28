@@ -9,7 +9,7 @@ BOOST_Version=boost_1_68_0
 ARMADILLO_Version=armadillo-9.200.6
 
 # init
-Marker=SparkFHE_succeeded
+Marker=SparkFHE_succeded
 PROJECT_ROOT_PATH=`pwd`/"../../../"
 DEPS_PATH="$PROJECT_ROOT_PATH/deps"
 libSparkFHE_root=$PROJECT_ROOT_PATH/libSparkFHE
@@ -290,22 +290,22 @@ else
     download_and_install_helib
 fi
 
-download and install SEAL; due to copyright reason we can automatically fetch the package.
-download from here, https://www.microsoft.com/en-us/research/project/simple-encrypted-arithmetic-library/
-place the folder into deps and rename to "SEAL"
-SEAL="SEAL"
-if [ -d $SEAL ]; then
-   echo "Installing $SEAL..."
-   cd $SEAL/$SEAL
-   cmake .
-   make
-   echo "Installing $SEAL... (DONE)"
-   cd ../..
-else
-   echo "Please download Seal from https://www.microsoft.com/en-us/research/project/simple-encrypted-arithmetic-library/ "
-   echo "and put and rename the library to deps/SEAL before continue."
-   exit
-fi
+# download and install SEAL; due to copyright reason we can automatically fetch the package.
+# download from here, https://www.microsoft.com/en-us/research/project/simple-encrypted-arithmetic-library/
+# place the folder into deps and rename to "SEAL"
+# SEAL="SEAL"
+# if [ -d $SEAL ]; then
+#    echo "Installing $SEAL..."
+#    cd $SEAL/$SEAL
+#    cmake .
+#    make
+#    echo "Installing $SEAL... (DONE)"
+#    cd ../..
+# else
+#    echo "Please download Seal from https://www.microsoft.com/en-us/research/project/simple-encrypted-arithmetic-library/ "
+#    echo "and put and rename the library to deps/SEAL before continue."
+#    exit
+# fi
 
 #PALISADE="PALISADE"
 #if [ ! -d $PALISADE ]; then
