@@ -200,6 +200,9 @@ fi
 
 
 
+cd $PROJECT_ROOT_PATH
+trap EXIT
+
 
 
 

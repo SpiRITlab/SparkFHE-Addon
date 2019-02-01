@@ -19,7 +19,7 @@ log4j_file=$SparkFHE_Addon_name/resources/config/log4j.properties
 jar_sparkfhe_examples=examples/jars/$(ls examples/jars | grep sparkfhe-examples-)
 jar_sparkfhe_api=jars/$(ls jars | grep sparkfhe-api-)
 jar_sparkfhe_plugin=jars/$(ls jars | grep spark-fhe)
-libSparkFHE_path=libSparkFHE/lib
+libSparkFHE_path=libSparkFHE/lib:/usr/local/lib
 java_class_path=.:jars
 
 

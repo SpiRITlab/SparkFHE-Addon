@@ -55,12 +55,14 @@ function run_spark_submit_command() {
 		--conf spark.driver.extraJavaOptions="-Djava.library.path=$libSparkFHE_path -Dlog4j.configuration=$log4j_file"  \
 		--conf spark.executor.extraClassPath="$java_class_path" \
 		--conf spark.executor.extraLibraryPath="$libSparkFHE_path" \
-		--conf spark.executor.extraJavaOptions="-Djava.library.path=$libSparkFHE_path -Dlog4j.configuration=$log4j_file"  \
+		--conf spark.mesos.executor.docker.image="peiworld/sparkfhe" \
+        --conf spark.mesos.executor.docker.forcePullImage=true \
         --conf spark.mesos.executor.home=$SparkFHE_distribution \
         --conf spark.executorEnv.MESOS_NATIVE_JAVA_LIBRARY=/usr/local/lib/libmesos.so \
+        --conf spark.mesos.executor.docker.parameters="name=SparkFHERun" \
+        --conf spark.mesos.executor.docker.volumes=/usr/local/lib:/usr/local/lib:ro \
 		$jar_sparkfhe_examples $3 $4 $5 $6 $7
 }
-
 
 # avoid using hadoop for storage
 HADOOP_CONF_DIR=`echo $HADOOP_CONF_DIR`
@@ -85,7 +87,6 @@ run_spark_submit_command  sparkfhe_basic_OPs_examples  spiritlab.sparkfhe.exampl
 
 # run FHE dot product over two encrypted vectors
 run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample 1 "$SparkFHE_distribution/gen/keys/my_public_key.txt" "$SparkFHE_distribution/gen/keys/my_secret_key.txt"   "$SparkFHE_distribution/gen/records/$(ls $SparkFHE_distribution/gen/records | grep vec_a)" "$SparkFHE_distribution/gen/records/$(ls $SparkFHE_distribution/gen/records | grep vec_b)"
-
 
 
 
