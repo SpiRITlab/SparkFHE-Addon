@@ -344,7 +344,7 @@ fi
 #fi
 
 
-
+trap EXIT
 
 
 
