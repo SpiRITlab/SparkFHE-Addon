@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 GMP_Version=gmp-6.1.2
 GF2X_Version=gf2x-1.2
 NTL_Version=ntl-11.3.0
@@ -46,7 +45,6 @@ install_boost(){
     ./b2 install
     echo "Installing $BOOST... (DONE)"
     touch $Marker # add the marker 
-    echo "created marker"
     cd ..
 }
 
@@ -346,5 +344,5 @@ fi
 
 
 
-
+trap - EXIT
 
