@@ -342,7 +342,7 @@ fi
 #fi
 
 
-
+trap EXIT
 
 trap - EXIT
 
