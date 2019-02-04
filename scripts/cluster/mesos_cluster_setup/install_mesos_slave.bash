@@ -29,3 +29,6 @@ cp configs/slave/mesos-slave.service /etc/systemd/system/mesos-slave.service
 systemctl daemon-reload
 systemctl start mesos-slave.service
 systemctl enable mesos-slave
+
+
+systemctl restart mesos-slave
