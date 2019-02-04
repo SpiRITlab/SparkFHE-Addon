@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+if [[ $# -eq 0 ]] ; then
+	echo "Missing arguments."
+	echo "Usage: bash install_mesos_cluster.bash masterHostname1,workerHostname1,workerHostname2,..."
+	exit 0
+fi
+
 cluster=$1
 eval $(echo $cluster | awk '{split($0, array, ",");for(i in array)print "host_array["i"]="array[i]}')
 
@@ -25,7 +31,7 @@ echo "Setting up Mesos Slaves"
 echo =========================================================
 for(( i=2;i<=${#host_array[@]};i++)) ; do
     echo "Copying mesos files..."
-    rsync -avz $current_path/../../../SparkFHE ${host_array[i]}:~
+    rsync -avz $current_path/../../../../SparkFHE-Addon ${host_array[i]}:~
     echo "Installing on ${host_array[i]}"
     #ssh ${host_array[i]} "cd ~; mkdir -p mesos"
     #echo "Copying install script and configs"
@@ -35,7 +41,7 @@ for(( i=2;i<=${#host_array[@]};i++)) ; do
     echo "Installing and starting mesos-slave"
     ssh ${host_array[i]} "cd $current_path; sudo ./install_mesos_slave.bash $local_ip > /dev/null"
     echo "Cleaning up on ${host_array[i]}"
-    ssh ${host_array[i]} "cd ~; rm -rf SparkFHE"
+    ssh ${host_array[i]} "cd ~; rm -rf SparkFHE-Addon"
 done
 
 echo "Cleaning on on master"
