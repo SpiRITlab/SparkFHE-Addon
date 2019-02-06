@@ -4,6 +4,7 @@ masterIP=$1
 sourcePath=`pwd`
 apt -y install build-essential python-dev libcurl4-nss-dev libsasl2-dev libsasl2-modules maven libapr1-dev libsvn-dev zlib1g-dev unzip
 
+# Download mesos-1.6.0 and compile
 wget http://archive.apache.org/dist/mesos/1.6.0/mesos-1.6.0.tar.gz
 tar -xzvf mesos-1.6.0.tar.gz
 cd mesos-1.6.0
@@ -15,6 +16,7 @@ make -j 14 V=0
 make install
 ldconfig
 cd $sourcePath
+
 # Install mesos and zookeeper
 apt-get -y install zookeeperd
 
