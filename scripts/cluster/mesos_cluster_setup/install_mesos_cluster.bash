@@ -60,8 +60,8 @@ systemctl restart spark.service
 systemctl restart mesos-master
 
 # Run a sample Spark Job
-echo "Running test Spark job"
-/spark/bin/spark-submit --name SparkPiTestApp --class org.apache.spark.examples.SparkPi --master mesos://$local_ip:7077 --deploy-mode cluster --executor-memory 1G --total-executor-cores 30 /spark/examples/jars/spark-examples_2.11-2.2.0.jar 100
+# echo "Running test Spark job"
+# /spark/bin/spark-submit --name SparkPiTestApp --class org.apache.spark.examples.SparkPi --master mesos://$local_ip:7077 --deploy-mode cluster --executor-memory 1G --total-executor-cores 30 /spark/examples/jars/spark-examples_2.11-2.2.0.jar 100
 
 echo ========================== DONE =============================
 
