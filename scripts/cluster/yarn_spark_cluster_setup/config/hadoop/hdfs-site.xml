@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<configuration>
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:///yarn-spark-cluster/hdfs/namenode</value>
+        <description>NameNode directory for namespace and transaction logs storage.</description>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:///yarn-spark-cluster/hdfs/datanode</value>
+        <description>DataNode directory</description>
+    </property>
+    <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
+<!--         <property> 
+        <name>dfs.namenode.http-address</name>
+        <value>master:50070</value>
+    </property>
+    <property> 
+        <name>dfs.namenode.secondary.http-address</name>
+        <value>master:50090</value>
+</property> -->
+</configuration>
