@@ -1,6 +1,6 @@
 ## Prerequisites
 * Ensure that the master node can SSH as root to all other nodes in the cluster. On your laptop, follow these [instructions](https://github.com/SpiRITlab/SparkFHE-Addon/tree/fix_install_script/scripts/cluster/cloudlab) to setup the Username and Manifest.xml files. Then, run $> bash authorize_access_between_nodes.bash
-  * you should see messages regarding the authorizing nodes as follow.
+  * you should see messages regarding the authorizing nodes as follow (path and IP address maybe different).
   ```
     Path from include_functions.bash: /Users/ph/myGit/project_on_vhost6/SparkFHE-Addon/scripts/cluster/cloudlab
     Scripts path provided: /Users/ph/myGit/project_on_vhost6/SparkFHE-Addon/scripts/cluster
