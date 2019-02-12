@@ -33,11 +33,6 @@ for(( i=2;i<=${#host_array[@]};i++)) ; do
     echo "Copying mesos files..."
     rsync -avz $current_path/../../../../SparkFHE-Addon/ ${host_array[i]}:$current_path/../../../../SparkFHE-Addon/
     echo "Installing on ${host_array[i]}"
-    #ssh ${host_array[i]} "cd ~; mkdir -p mesos"
-    #echo "Copying install script and configs"
-    #scp install_mesos_slave.bash ${host_array[i]}:$current_path
-    #scp configs/slave/master ${host_array[i]}:$current_path
-    #scp configs/slave/mesos-slave.service ${host_array[i]}:$current_path
     echo "Installing and starting mesos-slave"
     ssh ${host_array[i]} "cd $current_path; sudo ./install_mesos_slave.bash $local_ip > /dev/null"
     echo "Cleaning up on ${host_array[i]}"
@@ -50,7 +45,7 @@ rm -rf mesos*
 
 # Start Spark Cluster dispatcher service
 echo "Starting Spark service"
-cp configs/master/spark.service /etc/systemd/system/spark.service
+# cp configs/master/spark.service /etc/systemd/system/spark.service
 systemctl daemon-reload
 systemctl start spark.service
 systemctl enable spark

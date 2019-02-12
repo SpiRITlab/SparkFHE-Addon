@@ -5,9 +5,7 @@ Requires=mesos-master.service
 
 [Service]
 Environment=MESOS_NATIVE_JAVA_LIBRARY=/usr/local/lib/libmesos.so
-ExecStart=/spark-3.0.0-SNAPSHOT-bin-SparkFHE/bin/spark-class org.apache.spark.deploy.mesos.MesosClusterDispatcher --host masterIP --master mesos://masterIP:5050
+ExecStart=/SPARK_DISTRIBUTION_PATH/bin/spark-class org.apache.spark.deploy.mesos.MesosClusterDispatcher --host masterIP --master mesos://masterIP:5050
 
 [Install]
 WantedBy=multi-user.target
-
-

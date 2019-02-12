@@ -14,11 +14,12 @@ ldconfig
 cd $sourcePath
 
 # Configure zookeeper master
-sed -i "s/masterIP/$masterIP/g" configs/slave/master
+# sed -i "s/masterIP/$masterIP/g" configs/slave/master
 
 # Configure Mesos slave
 mkdir -p /etc/mesos-slave
-cp configs/slave/master /etc/mesos-slave/master
+sed "s/masterIP/$masterIP/g" configs/slave/master > /etc/mesos-slave/master
+
 cp configs/slave/mesos-slave.service /etc/systemd/system/mesos-slave.service
 
 # Restart relevant services
