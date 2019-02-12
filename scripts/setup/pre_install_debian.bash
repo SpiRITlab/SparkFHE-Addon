@@ -7,3 +7,5 @@ echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /u
 sudo apt-get install -y openjdk-8-jdk unzip libz-dev git build-essential m4 libpcre3-dev gcc-8 g++-8 cmake python-dev python-pip oracle-java8-installer maven
 sudo apt-get autoremove -y
 sudo apt-get clean
+
+pip install --upgrade pip
