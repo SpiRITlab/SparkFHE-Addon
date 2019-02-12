@@ -4,25 +4,25 @@ base_address=`dirname "$(realpath $0)"`
 variables_address=${base_address}/include_variables.bash
 source $variables_address
 
-# Make Slaves File
-# Just lists all slave node names in a file
-i=1
-rm $root_folder_in_server/config/slaves
+# # Make Slaves File
+# # Just lists all slave node names in a file
+# i=1
+# rm $root_folder_in_server/config/slaves
 
-while [ $i -lt $TOTAL_NODES_IN_CLUSTER ]
-do
-	echo "worker$i" >> $root_folder_in_server/config/slaves
-	((i++))
-done 
+# while [ $i -lt $TOTAL_NODES_IN_CLUSTER ]
+# do
+# 	echo "worker$i" >> $root_folder_in_server/config/slaves
+# 	((i++))
+# done 
 
 # Install and Move Hadoop
-wget ${mirrorServer}hadoop/common/hadoop-${hadoopVersion}/hadoop-${hadoopVersion}.tar.gz
+# wget ${mirrorServer}hadoop/common/hadoop-${hadoopVersion}/hadoop-${hadoopVersion}.tar.gz
 tar -xzf hadoop-${hadoopVersion}.tar.gz --directory $HOME
 # rm hadoop-${hadoopVersion}.tar.gz
 rm -rf ${HADOOP_HOME} || true
 mv $HOME/hadoop-${hadoopVersion} ${HADOOP_HOME}
 
-wget ${mirrorServer}spark/spark-${sparkVersion}/spark-${sparkVersion}-bin-hadoop${hadoopForSpark}.tgz
+# wget ${mirrorServer}spark/spark-${sparkVersion}/spark-${sparkVersion}-bin-hadoop${hadoopForSpark}.tgz
 tar -xzf spark-${sparkVersion}-bin-hadoop${hadoopForSpark}.tgz --directory $HOME
 # rm spark-${sparkVersion}-bin-hadoop${hadoopForSpark}.tgz
 rm -rf ${SPARK_HOME} || true
@@ -59,10 +59,18 @@ cp $root_folder_in_server/cloudlab_server_scripts/spark_scripts/start_spark_hado
 cp $root_folder_in_server/cloudlab_server_scripts/spark_scripts/run_spark_job.sh $HADOOP_HOME/run_spark_job.sh
 cp $root_folder_in_server/cloudlab_server_scripts/spark_scripts/stop_spark_hadoop_cluster.sh $HADOOP_HOME/stop_spark_hadoop_cluster.sh
 
+cp $root_folder_in_server/cloudlab_server_scripts/spark_scripts/start_hadoop_cluster.sh $HADOOP_HOME/start_hadoop_cluster.sh
+cp $root_folder_in_server/cloudlab_server_scripts/spark_scripts/run_hadoop_job.sh $HADOOP_HOME/run_hadoop_job.sh
+cp $root_folder_in_server/cloudlab_server_scripts/spark_scripts/stop_hadoop_cluster.sh $HADOOP_HOME/stop_hadoop_cluster.sh
+
 # Set Permissions for scripts
 chmod 777 $HADOOP_HOME/start_spark_hadoop_cluster.sh
 chmod 777 $HADOOP_HOME/run_spark_job.sh
 chmod 777 $HADOOP_HOME/stop_spark_hadoop_cluster.sh
+
+chmod 777 $HADOOP_HOME/start_hadoop_cluster.sh
+chmod 777 $HADOOP_HOME/run_hadoop_job.sh
+chmod 777 $HADOOP_HOME/stop_hadoop_cluster.sh
 
 # Set Permissions for jar
 chmod 777 $SPARK_HOME/examples/jars/spark-examples*.jar

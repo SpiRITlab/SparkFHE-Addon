@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <configuration>
     <property>
-        <name>fs.defaultFS</name>
-        <value>hdfs://master:9000/</value>
+        <name>fs.default.name</name>
+        <value>hdfs://master.yarn-spark-1.iotx-pg0.utah.cloudlab.us:9000/</value>
     </property>
     <property>
     	<name>hadoop.tmp.dir</name>

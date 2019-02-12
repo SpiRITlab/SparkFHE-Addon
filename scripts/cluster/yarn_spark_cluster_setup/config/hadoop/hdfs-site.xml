@@ -12,14 +12,14 @@
     </property>
     <property>
         <name>dfs.replication</name>
-        <value>3</value>
+        <value>1</value>
     </property>
 <!--         <property> 
         <name>dfs.namenode.http-address</name>
-        <value>master:50070</value>
+        <value>10.10.1.2:50070</value>
     </property>
     <property> 
         <name>dfs.namenode.secondary.http-address</name>
-        <value>master:50090</value>
+        <value>10.10.1.2:50090</value>
 </property> -->
 </configuration>

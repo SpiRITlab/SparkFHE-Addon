@@ -4,9 +4,7 @@ Host localhost
 Host 0.0.0.0
   StrictHostKeyChecking no
   
-Host worker*
+Host *
    StrictHostKeyChecking no
 
-Host master
-   StrictHostKeyChecking no
-   UserKnownHostsFile=/dev/null
+UserKnownHostsFile=/dev/null

@@ -5,7 +5,7 @@
         <value>yarn</value>
     </property>
     <property>
-    <name>mapreduce.jobtracker.address</name>
-    <value>master:54311</value>
+    <name>mapreduce.job.tracker</name>
+    <value>master.yarn-spark-1.iotx-pg0.utah.cloudlab.us:8021</value>
   </property>
 </configuration>
