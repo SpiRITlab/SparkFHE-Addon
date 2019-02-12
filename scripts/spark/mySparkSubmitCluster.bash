@@ -77,8 +77,16 @@ run_spark_submit_command  sparkfhe_basic_examples  spiritlab.sparkfhe.example.ba
 # generate example key pairs
 run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample 1
 
+# wait for new key to be generated
+echo "waiting 20s for key to be generated..." 
+sleep 20
+
 # generate example ciphertexts
 run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample 1 "$SparkFHE_distribution/gen/keys/my_public_key.txt" "$SparkFHE_distribution/gen/keys/my_secret_key.txt"
+
+# wait for new ciphertexts to be generated
+echo "waiting 20s for ciphertexts to be generated..."
+sleep 20
 
 # run basic FHE arithmetic operation over encrypted data
 run_spark_submit_command  sparkfhe_basic_OPs_examples  spiritlab.sparkfhe.example.basic.BasicOPsExample 4 "$SparkFHE_distribution/gen/keys/my_public_key.txt" "$SparkFHE_distribution/gen/keys/my_secret_key.txt"   "$SparkFHE_distribution/gen/records/$(ls $SparkFHE_distribution/gen/records | grep ptxt_long_0)" "$SparkFHE_distribution/gen/records/$(ls $SparkFHE_distribution/gen/records | grep ptxt_long_1)"
