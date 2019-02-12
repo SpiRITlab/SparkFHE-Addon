@@ -2,7 +2,7 @@
 
 masterIP=$1
 sourcePath=`pwd`
-apt -y install build-essential python-dev libcurl4-nss-dev libsasl2-dev libsasl2-modules maven libapr1-dev libsvn-dev zlib1g-dev unzip
+apt -y install build-essential python-dev python-pip libcurl4-nss-dev libsasl2-dev libsasl2-modules maven libapr1-dev libsvn-dev zlib1g-dev unzip
 
 cd mesos-1.6.0/build
 
