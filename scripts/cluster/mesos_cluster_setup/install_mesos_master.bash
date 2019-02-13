@@ -13,6 +13,7 @@ cd build
 
 ../configure
 make -j 14 V=0
+make uninstall
 make install
 ldconfig
 cd $sourcePath

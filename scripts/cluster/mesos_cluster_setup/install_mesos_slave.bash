@@ -8,6 +8,7 @@ cd mesos-1.6.0/build
 
 #../configure
 #make -j 14 V=0
+make uninstall
 make install
 ldconfig
 
