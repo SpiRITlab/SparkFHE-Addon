@@ -8,7 +8,11 @@ Note that the scripts are designed to run on Master Node.
 
 Edit the variable master_node_login=username@id.region.cloudlab.us
 
-This will enable the script to move the relevant files to Master Node. SSH into address for master node and navigate to the address /yarn_spark_cluster_setup
+This will enable the script to move the relevant files to Master Node. 
+```
+bash move_files_to_master.sh
+```
+SSH into address for master node and navigate to the address /yarn_spark_cluster_setup
 
 # Install Hadoop and Spark on all nodes
 ```
