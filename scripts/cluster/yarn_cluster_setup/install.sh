@@ -28,6 +28,7 @@ for (( c=1; c<=$#; c++ )); do
     fi
 done
 
+# Add Hyphen to the end of the slaves file
 echo "-" >> slaves
 
 root_folder_in_server=/yarn_cluster_setup
@@ -37,17 +38,18 @@ python3 ${root_folder_in_server}/setup.py
 
 # Read addresses in slaves file
 cat slaves | while read line
+
 do
     if [ "$line" = "-" ]; then
         echo "Skip $line"
     else
         ssh root@$line -n "rm -rf ${root_folder_in_server} && mkdir ${root_folder_in_server}"
         echo "Copy data to $line"
-        scp  /yarn_spark_cluster_setup/setup.py root@$line:/yarn_spark_cluster_setup/ && \
-         scp /yarn_spark_cluster_setup/master root@$line:/yarn_spark_cluster_setup/ && \
-         scp /yarn_spark_cluster_setup/slaves root@$line:/yarn_spark_cluster_setup/
+        scp ${root_folder_in_server}/setup.py root@$line:${root_folder_in_server} && \
+        scp ${root_folder_in_server}/master root@$line:${root_folder_in_server} && \
+        scp ${root_folder_in_server}/slaves root@$line:${root_folder_in_server}
         echo "Setup $line"
-        # ssh root@$line -n "cd ${root_folder_in_server}"
+        ssh root@$line -n "cd ${root_folder_in_server}"
         ssh root@$line -n "cd ${root_folder_in_server} && python3 setup.py"
         echo "Finished config node $line"
         echo "########################################################"

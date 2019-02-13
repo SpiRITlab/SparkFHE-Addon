@@ -31,4 +31,4 @@ echo "RUN jps - Java Virtual Machine Process Status Tool"
 jps
 
 echo "Get basic filesystem information and statistics."
-hdfs dfsadmin -report
+/usr/local/hadoop/bin/hdfs dfsadmin -report
