@@ -43,6 +43,7 @@ function authorize_access_between_nodes() {
         # Derive the corresponding public key portion.
         ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $MyUserName@${cluster_nodes[idx]} 'mkdir -p $HOME/.ssh && \
          chmod 700 $HOME/.ssh && \
+         rm -rf $HOME/.ssh/id_rsa && \
          geni-get key > $HOME/.ssh/id_rsa && \
          chmod 600 $HOME/.ssh/id_rsa && \
          ssh-keygen -y -f $HOME/.ssh/id_rsa > $HOME/.ssh/id_rsa.pub'
@@ -56,10 +57,7 @@ function authorize_access_between_nodes() {
 function change_SparkFHE_distribution_permission() {
     echo "Changing permission on nodes..."
     for ((idx=0; idx<${#cluster_nodes[@]}; ++idx)); do
-        # Create the user SSH directory, just in case.
-        # Retrieve the server-generated RSA private key.
-        # Derive the corresponding public key portion.
-        ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $MyUserName@${cluster_nodes[idx]} 'SparkFHEDistributionName=$(ls / | awk "match($0, /spark*/) {print}"); sudo chmod -R g+rw /$SparkFHEDistributionName; sudo chown -R nobody:iotx-PG0 /$SparkFHEDistributionName;'
+        ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $MyUserName@${cluster_nodes[idx]} "SparkFHEDistributionName=$(ls / | awk 'match($0, /SparkFHE/) {print}'); sudo chmod -R g+rw /$SparkFHEDistributionName; sudo chown -R nobody:iotx-PG0 /$SparkFHEDistributionName;"
     done
 }
 
