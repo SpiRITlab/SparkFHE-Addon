@@ -54,14 +54,6 @@ function authorize_access_between_nodes() {
     done
 }
 
-function change_SparkFHE_distribution_permission() {
-    echo "Changing permission on nodes..."
-    for ((idx=0; idx<${#cluster_nodes[@]}; ++idx)); do
-        ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $MyUserName@${cluster_nodes[idx]} "SparkFHEDistributionName=$(ls / | awk 'match($0, /SparkFHE/) {print}'); sudo chmod -R g+rw /$SparkFHEDistributionName; sudo chown -R nobody:iotx-PG0 /$SparkFHEDistributionName;"
-    done
-}
-
-
 
 function git_pull_all() {
     KeyName=$(basename $1)
