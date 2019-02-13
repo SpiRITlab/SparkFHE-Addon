@@ -9,6 +9,23 @@ fi
 cluster=$1
 eval $(echo $cluster | awk '{split($0, array, ",");for(i in array)print "host_array["i"]="array[i]}')
 
+
+function checkSSH() {
+    echo "Checking SSH connections"
+    for(( i=2;i<=${#host_array[@]};i++)) ; do
+        ssh ${host_array[i]} "hostname"
+        if [ $? -eq 0 ]
+        then
+            echo -e "Can SSH to ${host_array[i]}"
+        else
+	    echo -e "Cannot SSH to ${host_array[i]}, please fix."
+	    exit 255
+        fi
+    done
+}
+
+checkSSH
+
 ## local_ip replace localhost in config file
 local_host="`hostname`"
 local_ip=`curl ifconfig.me`
