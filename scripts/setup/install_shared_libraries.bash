@@ -344,5 +344,3 @@ fi
 
 trap EXIT
 
-trap - EXIT
-
