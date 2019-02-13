@@ -15,9 +15,7 @@
 ## Setup instructions
 On the Mesos master node run the following commands as root:
 ```
-cd ~
-git clone https://github.com/SpiRITlab/SparkFHE-Addon
-cd SparkFHE-Addon/scripts/cluster/mesos_cluster_setup
+cd /spark-3.0.0-SNAPSHOT-bin-SparkFHE/SparkFHE-Addon/scripts/cluster/mesos_cluster_setup
 bash install_mesos_cluster.bash masterHostname,worker1Hostname,worker2Hostname,...
 ```
 
