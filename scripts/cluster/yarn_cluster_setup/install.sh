@@ -30,7 +30,7 @@ done
 
 echo "-" >> slaves
 
-root_folder_in_server=/yarn_spark_cluster_setup
+root_folder_in_server=/yarn_cluster_setup
 
 # Setup Environment at node
 python3 ${root_folder_in_server}/setup.py
