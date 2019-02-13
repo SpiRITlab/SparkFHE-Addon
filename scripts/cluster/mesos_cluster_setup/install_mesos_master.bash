@@ -20,16 +20,18 @@ cd $sourcePath
 # Install mesos and zookeeper
 apt-get -y install zookeeperd
 
-# Configure zookeeper master
-sed -i "s/masterIP/$masterIP/g" configs/master/*
-
-# Configure Zookeeper and Mesos master
+# Creating configuration files
 mkdir -p /etc/mesos-master
-cp configs/master/zk /etc/mesos-master/zk
-cp configs/master/zoo.cfg /etc/zookeeper/conf/zoo.cfg
+sed "s/masterIP/$masterIP/g" configs/master/zk > /etc/mesos-master/zk
+sed "s/masterIP/$masterIP/g" configs/master/zoo.cfg > /etc/mesos-master/zoo.cfg
+sed "s/masterIP/$masterIP/g" configs/master/mesos-master.service > /etc/systemd/system/mesos-master.service
+sed "s/masterIP/$masterIP/g" configs/master/spark.service > /etc/systemd/system/spark.service
+
+sparkPath=`ls / | grep "^spark.*SparkFHE$"`
+sed -i "s/SPARK_DISTRIBUTION_PATH/$sparkPath/g" /etc/systemd/system/spark.service
+
 touch /etc/zookeeper/conf/myid
 echo 1 > /etc/zookeeper/conf/myid
-cp configs/master/mesos-master.service /etc/systemd/system/mesos-master.service
 
 # Restart relevant services
 systemctl daemon-reload
