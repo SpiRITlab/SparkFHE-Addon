@@ -1,17 +1,31 @@
-#### Objective: The objective of this script is to generate a sample Yarn-Spark cluster on Docker environment.
-#### Pre-requisites: For now the image MulticloudSparkFHE should be used: 
 
-#### Instructions:
+The key setup has to be done manually using scp. Move id_rsa and id_rsa.pub to ~/.ssh on all nodes. 
 
-1. **Start an experiment in MulticloudSparkFHE**
+Setup an experiment on Cloudlab using the Ubuntu Base Image. Note the master node login.
+Note that the scripts are designed to run on Master Node.
 
-Copy the contents of Manifest.xml to base_directory/local_scripts/bash_scripts_library/Manifest.xml
-Also type in the user name for Cloudlab in base_directory/local_scripts/bash_scripts_library/myUserName.txt
-2. **Run the process from local**
+# Edit the master node login in move_files_to_master.sh
 
-Navigate to the folder base_directory/local_scripts used cd
-Then run the automated script
-```bash
-bash run_all_processes_through_local.bash
+Edit the variable master_node_login=username@id.region.cloudlab.us
+This moves all the relevant files to Master Node
+SSH into address for master node and navigate to the address /yarn_spark_cluster_setup
+
+# Install Hadoop and Spark on all nodes
 ```
-This script will move all files to server, install hadoop and spark, run spark job on yarn network and remove all files when the job is done.
+$> cd /yarn_spark_cluster_setup
+sudo bash install.sh master worker1 worker2 ...
+```
+
+# Start Yarn Spark Cluster on Master
+```
+$> cd Test_Pi
+sudo bash start_yarn_spark_cluster.sh
+sudo bash run_spark_job.sh
+```
+Use the link generated after successful completion to view the web interface for Yarn
+
+# Stop of Cluster
+```
+$> sudo bash stop_spark_job.sh
+```
+After running this command, the web interface will not work
