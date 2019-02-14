@@ -3,8 +3,8 @@
 
  * You may wan to change the permission of the SparkFHE distribution by the following commands.
    ```
-   $> sudo chmod -R g+rw /spark-3.0.0-SNAPSHOT-bin-SparkFHE
-   $> sudo chown -R nobody:iotx-PG0 /spark-3.0.0-SNAPSHOT-bin-SparkFHE
+   sudo chmod -R g+rw /spark-3.0.0-SNAPSHOT-bin-SparkFHE
+   sudo chown -R nobody:iotx-PG0 /spark-3.0.0-SNAPSHOT-bin-SparkFHE
    ```
 
 * Ensure that the master node can SSH as root to all other nodes in the cluster. On your laptop (outside the cloudlab environment), follow these [instructions](https://github.com/SpiRITlab/SparkFHE-Addon/tree/fix_install_script/scripts/cluster/cloudlab) to setup the myUsername.txt and Manifest.xml files. 
