@@ -213,17 +213,17 @@ else
 fi
 
 # Jansson is a C library for encoding, decoding and manipulating JSON data.
-JANSSON="JANSSON"
-if [ -d $JANSSON ]; then
-    if [ ! -f $JANSSON/$Marker ]; then
-        rm -rf $JANSSON. # remove the folder
-        install_jansson
-    else
-        echo "JANSSON already installed"
-    fi
-else
-    install_jansson
-fi
+# JANSSON="JANSSON"
+# if [ -d $JANSSON ]; then
+#     if [ ! -f $JANSSON/$Marker ]; then
+#         rm -rf $JANSSON. # remove the folder
+#         install_jansson
+#     else
+#         echo "JANSSON already installed"
+#     fi
+# else
+#     install_jansson
+# fi
 
 # The GMP package contains math libraries. These have useful functions 
 # for arbitrary precision arithmetic.
