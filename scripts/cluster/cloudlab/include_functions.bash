@@ -43,6 +43,7 @@ function authorize_access_between_nodes() {
         # Derive the corresponding public key portion.
         ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $MyUserName@${cluster_nodes[idx]} 'mkdir -p $HOME/.ssh && \
          chmod 700 $HOME/.ssh && \
+         rm -rf $HOME/.ssh/id_rsa && \
          geni-get key > $HOME/.ssh/id_rsa && \
          chmod 600 $HOME/.ssh/id_rsa && \
          ssh-keygen -y -f $HOME/.ssh/id_rsa > $HOME/.ssh/id_rsa.pub'
@@ -52,6 +53,7 @@ function authorize_access_between_nodes() {
         ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $MyUserName@${cluster_nodes[idx]} 'grep -q -f $HOME/.ssh/id_rsa.pub $HOME/.ssh/authorized_keys || cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys'
     done
 }
+
 
 function git_pull_all() {
     KeyName=$(basename $1)
