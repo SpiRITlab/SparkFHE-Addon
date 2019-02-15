@@ -8,12 +8,17 @@ The script move_files_to_master.sh moves scripts from local machine to Master No
 ```
 bash move_files_to_master.sh username@id.region.cloudlab.us
 ```
+
+# SSH into Master Node
 SSH into address for master node and navigate to the address /yarn_spark_cluster_setup
+```
+ssh -p 22 username@id.region.cloudlab.us
+cd /yarn_spark_cluster_setup
+```
 
 # Install Hadoop and Spark on all nodes
 Specify the names of nodes as arguments.
 ```
-cd /yarn_spark_cluster_setup
 sudo bash install.sh master worker1 worker2 ...
 ```
 

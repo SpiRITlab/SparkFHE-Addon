@@ -8,9 +8,9 @@ if [ $# -lt 2 ]
 fi
 
 # Clear Content from Files
-rm master
+rm master || true
 touch master
-rm slaves
+rm slaves || true
 touch slaves
 
 # Add Hyphen to the beginning of the slaves file

@@ -25,19 +25,8 @@ mkdir_command='sudo mkdir -p '${root_folder_in_server}
 ssh $master_node_login $mkdir_command
 
 # Move Files on Master Node's Home
-# Files Cannot be moved directly in Root due to permission issues
-scp -r ${base_address}/Test_Pi  $master_node_login:~/Test_Pi
-scp -r ${base_address}/install.sh  $master_node_login:~/install.sh
-scp -r ${base_address}/setup.py $master_node_login:~/setup.py
-
-# Move Files in correct location
-move_command='sudo mv ~/Test_Pi '${root_folder_in_server}'/Test_Pi'
-ssh $master_node_login $move_command
-
-move_command='sudo mv ~/install.sh '${root_folder_in_server}'/install.sh'
-ssh $master_node_login $move_command
-
-move_command='sudo mv ~/setup.py '${root_folder_in_server}'/setup.py'
-ssh $master_node_login $move_command
+rsync -a --rsync-path="sudo rsync" ${base_address}/Test_Pi  $master_node_login:${root_folder_in_server}
+rsync -a --rsync-path="sudo rsync" ${base_address}/install.sh  $master_node_login:${root_folder_in_server}
+rsync -a --rsync-path="sudo rsync" ${base_address}/setup.py  $master_node_login:${root_folder_in_server}
 
 echo 'Login to Master Node, navigate to '${root_folder_in_server}' and run sudo bash install.sh'
