@@ -7,10 +7,16 @@
 # get_nodes_info
 # authorize_access_between_nodes
 
+ if [ "$#" -eq  "0" ]; then
+     echo "No Arguments Supplied. Use something like pmrane@ms1028.utah.cloudlab.us"
+     exit
+ else
+     master_node_login=$1
+ fi
+
 # Get the current directory
 base_address=`dirname "$(realpath $0)"`
-# THIS NEEDS TO CHANGE AS PER EXPERIMENT DETAILS
-master_node_login=pmrane@ms1028.utah.cloudlab.us
+
 # Project Folder name in root
 root_folder_in_server=/yarn_cluster_setup
 
