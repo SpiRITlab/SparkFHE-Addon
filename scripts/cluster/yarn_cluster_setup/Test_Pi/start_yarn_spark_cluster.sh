@@ -24,7 +24,7 @@ echo "STARTING HADOOP SERVICES"
 /usr/local/hadoop/bin/hdfs dfsadmin -safemode leave
 
 echo "STARTING SPARK SERVICES"
-/usr/local/spark/sbin/start-all.sh
+/spark-3.0.0-SNAPSHOT-bin-SparkFHE/sbin/start-all.sh
 # scala -version
 
 echo "RUN jps - Java Virtual Machine Process Status Tool"

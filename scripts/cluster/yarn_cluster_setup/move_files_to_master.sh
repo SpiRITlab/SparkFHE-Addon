@@ -18,7 +18,7 @@
 base_address=`dirname "$(realpath $0)"`
 
 # Project Folder name in root
-root_folder_in_server=/yarn_cluster_setup
+root_folder_in_server=/spark-3.0.0-SNAPSHOT-bin-SparkFHE/SparkFHE-Addon/scripts/cluster/yarn_cluster_setup
 
 # Make Folder before moving files
 mkdir_command='sudo mkdir -p '${root_folder_in_server}

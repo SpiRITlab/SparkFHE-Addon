@@ -7,7 +7,7 @@
 
 echo -e "Stopping Spark Cluster"
 
-/usr/local/spark/sbin/stop-all.sh
+/spark-3.0.0-SNAPSHOT-bin-SparkFHE/sbin/stop-all.sh
 
 echo -e "Stopping Hadoop Cluster"
 

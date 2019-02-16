@@ -31,12 +31,12 @@ done
 # Add Hyphen to the end of the slaves file
 echo "-" >> slaves
 
-root_folder_in_server=/yarn_cluster_setup
+root_folder_in_server=/spark-3.0.0-SNAPSHOT-bin-SparkFHE/SparkFHE-Addon/scripts/cluster/yarn_cluster_setup
 
 # Setup Environment at node
 python3 ${root_folder_in_server}/setup.py
 
-# Read addresses in slaves file
+Read addresses in slaves file
 cat slaves | while read line
 
 do

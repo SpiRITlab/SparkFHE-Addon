@@ -1,8 +1,12 @@
+
 Setup an experiment on Cloudlab using the SparkFHE-Base-Ubuntu18.04 image. Please make note of the master node login.
 
 Also, note that the scripts are designed to run on Master Node.
 
-# Move files to Master Node
+## Prerequisites
+* On all the nodes follow [instructions](https://github.com/SpiRITlab/SparkFHE-Examples/wiki) to setup SparkFHE distribution. Make sure you have gone through all the steps and the mySparkSubmitLocal.bash script runs correctly.
+
+# Move files to Master Node(TEMPORARY STEP FOR THIS BRANCH)
 
 The script move_files_to_master.sh moves scripts from local machine to Master Node. The name of the master node needs to be passed as an argumnent to the script.
 ```
@@ -13,14 +17,15 @@ bash move_files_to_master.sh username@id.region.cloudlab.us
 SSH into address for master node and navigate to the address /yarn_spark_cluster_setup
 ```
 ssh -p 22 username@id.region.cloudlab.us
-cd /yarn_spark_cluster_setup
+cd /spark-3.0.0-SNAPSHOT-bin-SparkFHE/SparkFHE-Addon/scripts/cluster/yarn_cluster_setup
 ```
 
-# Install Hadoop and Spark on all nodes
+# Install Hadoop and Spark on all nodes through Master Node
 Specify the names of nodes as arguments.
 ```
 sudo bash install.sh master worker1 worker2 ...
 ```
+This script moves files from master to other nodes and installs pre-requisites. After this script is integrated with master branch, the code for moving files to other nodes can be commented out. When TestDrive.bash is run on all nodes, the scripts to install and setup Yarn cluster should be available on all nodes.
 
 # Start Yarn Spark Cluster on Master
 ```

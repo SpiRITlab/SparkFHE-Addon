@@ -7,7 +7,7 @@ def write_hadoop_config_file(name, xml):
 	f.close()
 
 def write_spark_config_file(name, xml):
-	f = open("/usr/local/spark/conf/" + name, "w")
+	f = open("/spark-3.0.0-SNAPSHOT-bin-SparkFHE/conf/" + name, "w")
 	f.write(xml)
 	f.close()
 
@@ -251,22 +251,23 @@ slaves = slaves_address
 write_hadoop_config_file("slaves",slaves)
 
 # Remove Older Spark Content
-os.system("rm -rf /usr/local/spark-*/ && unlink /usr/local/spark")
+# os.system("rm -rf /usr/local/spark-*/ && unlink /usr/local/spark")
 os.system("sed -i /spark/d /root/.bashrc && sed -i /SPARK_HOME/d /root/.bashrc ")
 
 # Make Global Variables
-os.system("echo 'export SPARK_HOME=/usr/local/spark' >> /root/.bashrc")
-os.system("echo 'export PATH=$PATH:/usr/local/spark/bin' >> /root/.bashrc")
+os.system("echo 'export SPARK_HOME=/spark-3.0.0-SNAPSHOT-bin-SparkFHE/conf' >> /root/.bashrc")
+# os.system("echo 'export PATH=$PATH:/usr/local/spark/bin' >> /root/.bashrc")
+os.system("echo 'export PATH=$PATH:/spark-3.0.0-SNAPSHOT-bin-SparkFHE/bin/:/spark-3.0.0-SNAPSHOT-bin-SparkFHE/sbin/' >> /root/.bashrc")
 
-# Install Spark
-if not os.path.exists("/spark-2.3.2-bin-hadoop2.7.tgz"):
-    print("Downloading Spark 2.3.2....")
-    os.system("curl https://www-us.apache.org/dist/spark/spark-2.3.2/spark-2.3.2-bin-hadoop2.7.tgz > /spark-2.3.2-bin-hadoop2.7.tgz")
-    print("Download Spark 2.3.2 Successful...")
+# # Install Spark
+# if not os.path.exists("/spark-2.3.2-bin-hadoop2.7.tgz"):
+#     print("Downloading Spark 2.3.2....")
+#     os.system("curl https://www-us.apache.org/dist/spark/spark-2.3.2/spark-2.3.2-bin-hadoop2.7.tgz > /spark-2.3.2-bin-hadoop2.7.tgz")
+#     print("Download Spark 2.3.2 Successful...")
 
-print("Install Spark 2.3.2.....")
-os.system("tar -xzf /spark-2.3.2-bin-hadoop2.7.tgz -C /usr/local/ && ln -s /usr/local/spark-2.3.2-bin-hadoop2.7/ /usr/local/spark")
-print("Finished Spark 2.3.2.....")
+# print("Install Spark 2.3.2.....")
+# os.system("tar -xzf /spark-2.3.2-bin-hadoop2.7.tgz -C /usr/local/ && ln -s /usr/local/spark-2.3.2-bin-hadoop2.7/ /usr/local/spark")
+# print("Finished Spark 2.3.2.....")
 
 # spark-env.sh
 sparkenvsh = """#!/usr/bin/env bash
