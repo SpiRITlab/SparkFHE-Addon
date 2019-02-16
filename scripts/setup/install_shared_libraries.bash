@@ -237,19 +237,7 @@ else
     install_swig
 fi
 
-# Jansson is a C library for encoding, decoding and manipulating JSON data.
-# JANSSON="JANSSON"
-# if [ -d $JANSSON ]; then
-#     if [ ! -f $JANSSON/$Marker ]; then
-#         rm -rf $JANSSON. # remove the folder
-#         install_jansson
-#     else
-#         echo "JANSSON already installed"
-#     fi
-# else
-#     install_jansson
-#
-
+# RapidJSON is a JSON parser and generator for C++. It was inspired by RapidXml. 
 RapidJSON="RapidJSON"
 if [ -d $RapidJSON ]; then
     if [ ! -f $RapidJSON/$Marker ]; then
