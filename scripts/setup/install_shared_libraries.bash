@@ -41,7 +41,7 @@ install_boost(){
     rm "$BOOST_Version".tar.bz2
     mv $BOOST_Version $BOOST
     cd $BOOST
-     ./bootstrap.sh --with-libraries=$boost_libraries --prefix=$libSparkFHE_root
+    ./bootstrap.sh --with-libraries=$boost_libraries --prefix=$libSparkFHE_root
     ./b2 install
     echo "Installing $BOOST... (DONE)"
     touch $Marker # add the marker 
@@ -166,8 +166,9 @@ download_and_install_seal(){
     cd $SEAL
     git checkout master-SparkFHE
     cd src
-    cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
+    sudo make install
     echo "Installing $SEAL... (DONE)"
     cd ..
     touch $Marker # add the marker 
@@ -186,7 +187,7 @@ download_and_install_seal(){
 BOOST="BOOST"
 if [ -d $BOOST ]; then
     if [ ! -f $BOOST/$Marker ]; then
-        rm -rf $BOOST. # remove the folder 
+        rm -rf $BOOST # remove the folder 
         install_boost
     else
         echo "BOOST library already installed"
@@ -200,7 +201,7 @@ fi
 GoogleTEST="GoogleTEST"
 if [ -d $GoogleTEST ]; then
     if [ ! -f $GoogleTEST/$Marker ]; then
-        rm -rf $GoogleTEST. # remove the folder
+        rm -rf $GoogleTEST # remove the folder
         install_googletest
     else
         echo "GoogleTEST already installed"
@@ -217,7 +218,7 @@ fi
 SWIG="SWIG"
 if [ -d $SWIG ]; then
     if [ ! -f $SWIG/$Marker ]; then
-        rm -rf $SWIG. # remove the folder
+        rm -rf $SWIG # remove the folder
         install_swig
     else
         echo "SWIG already installed"
@@ -230,7 +231,7 @@ fi
 RapidJSON="RapidJSON"
 if [ -d $RapidJSON ]; then
     if [ ! -f $RapidJSON/$Marker ]; then
-        rm -rf $RapidJSON. # remove the folder 
+        rm -rf $RapidJSON # remove the folder 
         download_and_install_rapidjson
     else
         echo "RapidJSON already installed"
@@ -245,7 +246,7 @@ fi
 GMP="GMP"
 if [ -d $GMP ]; then
     if [ ! -f $GMP/$Marker ]; then
-        rm -rf $GMP. # remove the folder
+        rm -rf $GMP # remove the folder
         install_gmp
     else
         echo "GMP already installed"
@@ -260,7 +261,7 @@ fi
 GF2X="GF2X"
 if [ -d $GF2X ]; then
     if [ ! -f $GF2X/$Marker ]; then
-        rm -rf $GF2X. # remove the folder
+        rm -rf $GF2X # remove the folder
         download_and_install_gf2x
     else
         echo "GF2X already installed"
@@ -276,7 +277,7 @@ fi
 NTL="NTL"
 if [ -d $NTL ]; then
     if [ ! -f $NTL/$Marker ]; then
-        rm -rf $NTL. # remove the folder
+        rm -rf $NTL # remove the folder
         download_and_install_ntl
     else
         echo "NTL already installed"
@@ -289,7 +290,7 @@ fi
 ARMADILLO="ARMADILLO"
 if [ -d $ARMADILLO ]; then
     if [ ! -f $ARMADILLO/$Marker ]; then
-        rm -rf $ARMADILLO. # remove the folder
+        rm -rf $ARMADILLO # remove the folder
         download_and_install_armadillo
     else
         echo "ARMADILLO already installed"
@@ -302,7 +303,7 @@ fi
 HElib="HElib"
 if [ -d $HElib ]; then
      if [ ! -f $HElib/$Marker ]; then
-        rm -rf $HElib. # remove the folder
+        rm -rf $HElib # remove the folder
         download_and_install_helib
     else
         echo "HElib already installed"
