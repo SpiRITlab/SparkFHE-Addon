@@ -73,13 +73,24 @@ install_swig(){
     cd ..
 }
 
-install_jansson(){
-    echo "Installing $JANSSON..."
-    git clone https://github.com/akheron/jansson.git $JANSSON
-    cd $JANSSON
+# install_jansson(){
+#     echo "Installing $JANSSON..."
+#     git clone https://github.com/akheron/jansson.git $JANSSON
+#     cd $JANSSON
+#     cmake -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+#     make; make install
+#     echo "Installing $JANSSON... (DONE)"
+#     touch $Marker # add the marker 
+#     cd ..
+# }
+
+download_and_install_rapidjson(){
+    echo "Installing $RapidJSON..."
+    git clone git@github.com:Tencent/rapidjson.git $RapidJSON
+    cd $RapidJSON
     cmake -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
-    make; make install
-    echo "Installing $JANSSON... (DONE)"
+    make install
+    echo "Installing $RapidJSON... (DONE)"
     touch $Marker # add the marker 
     cd ..
 }
@@ -160,6 +171,20 @@ download_and_install_helib(){
     cd ..
 }
 
+download_and_install_seal(){
+    echo "Installing $SEAL..."
+    git clone https://github.com/SpiRITlab/SEAL.git $SEAL
+    cd $SEAL
+    git checkout master-SparkFHE
+    cd src
+    cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
+    echo "Installing $SEAL... (DONE)"
+    cd ..
+    touch $Marker # add the marker 
+    cd ..
+}
+
 # =============================================================================
 # installing dependencies 
 # =============================================================================
@@ -213,17 +238,30 @@ else
 fi
 
 # Jansson is a C library for encoding, decoding and manipulating JSON data.
-JANSSON="JANSSON"
-if [ -d $JANSSON ]; then
-    if [ ! -f $JANSSON/$Marker ]; then
-        rm -rf $JANSSON. # remove the folder
-        install_jansson
+# JANSSON="JANSSON"
+# if [ -d $JANSSON ]; then
+#     if [ ! -f $JANSSON/$Marker ]; then
+#         rm -rf $JANSSON. # remove the folder
+#         install_jansson
+#     else
+#         echo "JANSSON already installed"
+#     fi
+# else
+#     install_jansson
+#
+
+RapidJSON="RapidJSON"
+if [ -d $RapidJSON ]; then
+    if [ ! -f $RapidJSON/$Marker ]; then
+        rm -rf $RapidJSON. # remove the folder 
+        download_and_install_rapidjson
     else
-        echo "JANSSON already installed"
+        echo "RapidJSON already installed"
     fi
 else
-    install_jansson
+    download_and_install_rapidjson
 fi
+
 
 # The GMP package contains math libraries. These have useful functions 
 # for arbitrary precision arithmetic.
@@ -299,19 +337,17 @@ fi
 # download and install SEAL; due to copyright reason we can automatically fetch the package.
 # download from here, https://www.microsoft.com/en-us/research/project/simple-encrypted-arithmetic-library/
 # place the folder into deps and rename to "SEAL"
-# SEAL="SEAL"
-# if [ -d $SEAL ]; then
-#    echo "Installing $SEAL..."
-#    cd $SEAL/$SEAL
-#    cmake .
-#    make
-#    echo "Installing $SEAL... (DONE)"
-#    cd ../..
-# else
-#    echo "Please download Seal from https://www.microsoft.com/en-us/research/project/simple-encrypted-arithmetic-library/ "
-#    echo "and put and rename the library to deps/SEAL before continue."
-#    exit
-# fi
+SEAL="SEAL"
+if [ -d $SEAL ]; then
+    if [ ! -f $SEAL/$Marker ]; then
+        rm -rf $SEAL # remove the folder
+        download_and_install_seal 
+    else
+        echo "SEAL already installed"
+    fi
+else
+   download_and_install_seal
+fi
 
 
 #PALISADE="PALISADE"
