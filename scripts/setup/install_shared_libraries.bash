@@ -73,17 +73,6 @@ install_swig(){
     cd ..
 }
 
-# install_jansson(){
-#     echo "Installing $JANSSON..."
-#     git clone https://github.com/akheron/jansson.git $JANSSON
-#     cd $JANSSON
-#     cmake -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
-#     make; make install
-#     echo "Installing $JANSSON... (DONE)"
-#     touch $Marker # add the marker 
-#     cd ..
-# }
-
 download_and_install_rapidjson(){
     echo "Installing $RapidJSON..."
     git clone git@github.com:Tencent/rapidjson.git $RapidJSON
@@ -336,17 +325,6 @@ if [ -d $SEAL ]; then
 else
    download_and_install_seal
 fi
-
-
-#PALISADE="PALISADE"
-#if [ ! -d $PALISADE ]; then
-#    echo "Installing $PALISADE..."
-#    git clone https://git.njit.edu/palisade/PALISADE.git $PALISADE
-#    cd $PALISADE
-#    make CXX=g++-8 LD=g++-8
-#    echo "Installing $PALISADE... (DONE)"
-#    cd ..
-#fi
 
 
 # Uncomment the follow code to install AWS SDK
