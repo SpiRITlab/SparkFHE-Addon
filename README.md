@@ -2,12 +2,14 @@
 
 This scripts and resources will be shared among different components.
 
-- scripts
-	- cluster	cluster setup and management
-	- setup 	install necessary packages for the SparkFHE project
-	- spark 	submit job to spark environment
+- Scripts
+	- Cluster	Cluster setup and management
+	- Setup 	Install necessary packages for the SparkFHE project
+	- Spark 	Submit job to spark environment
 
-- resources
-	- config	configuration files for tools
-	- keys		generated or supplied keys
-	- params 	parameter files for crypto
+- Resources
+	- Config	Configuration files for tools
+	- Keys		Generated or supplied keys
+	- Params 	Parameter files for crypto
+
+### [Mesos cluster setup instructions](https://github.com/SpiRITlab/SparkFHE-Addon/tree/master/scripts/cluster/mesos_cluster_setup)
