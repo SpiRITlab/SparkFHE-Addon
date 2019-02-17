@@ -32,9 +32,6 @@ touch master
 rm slaves || true
 touch slaves
 
-# Add Hyphen to the beginning of the slaves file
-echo "-" >> slaves
-
 # Save 1st argument in master file
 master_limit=1
 echo ${host_array[$master_limit]} >> master
@@ -44,11 +41,7 @@ for(( i=2;i<=${#host_array[@]};i++)) ; do
     echo ${host_array[i]} >> slaves
 done
 
-# Add Hyphen to the end of the slaves file
-echo "-" >> slaves
-
 root_folder_in_server=`pwd`
-# echo $root_folder_in_server
 
 # Setup Environment at node
 python3 ${root_folder_in_server}/setup.py

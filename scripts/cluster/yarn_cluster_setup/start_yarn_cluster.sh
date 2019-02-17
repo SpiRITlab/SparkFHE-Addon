@@ -11,7 +11,6 @@ echo "STARTING HADOOP SERVICES"
 
 echo "STARTING SPARK SERVICES"
 /spark-3.0.0-SNAPSHOT-bin-SparkFHE/sbin/start-all.sh
-# scala -version
 
 echo "RUN jps - Java Virtual Machine Process Status Tool"
 jps

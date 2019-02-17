@@ -7,7 +7,7 @@ Also, note that the scripts are designed to run on Master Node.
 * On all the nodes follow [instructions](https://github.com/SpiRITlab/SparkFHE-Examples/wiki) to setup SparkFHE distribution. Make sure you have gone through all the steps and the mySparkSubmitLocal.bash script runs correctly.
 
 # SSH into Master Node
-SSH into address for master node and navigate to the address /yarn_spark_cluster_setup
+SSH into address for master node and navigate to the address specified below
 ```
 ssh -p 22 username@id.region.cloudlab.us
 cd /spark-3.0.0-SNAPSHOT-bin-SparkFHE/SparkFHE-Addon/scripts/cluster/yarn_cluster_setup
@@ -19,7 +19,7 @@ Specify the names of nodes as arguments.
 sudo bash install.sh master,worker1,worker2 ...
 ```
 
-# Start Yarn Spark Cluster on Master
+# Start Yarn Spark Cluster and Run Spark Job on Master
 ```
 sudo bash start_yarn_cluster.sh
 cd Test_Pi
@@ -47,7 +47,7 @@ JobMaster Interface:
 
 http://master.experiment-name.iotx-pg0.region.cloudlab.us:19888/jobhistory
 
-# Stopping the Cluster
+# Stop the Cluster
 ```
 cd ..
 sudo bash stop_yarn_job.sh
