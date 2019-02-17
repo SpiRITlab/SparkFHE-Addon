@@ -1,54 +1,208 @@
 import os
 import sys, socket
 
+def get_spark_directory(address, level_to_go_back):
+  folders = address.split('/')
+  del folders[0]
+  retained_length = len(folders) - level_to_go_back
+  reconstructed_string = ""
+  for i in range(0, retained_length):
+    reconstructed_string = folders[i] + '/'
+
+  return "/" + reconstructed_string
+
+SPARK_HOME = get_spark_directory(os.path.dirname(os.path.realpath(__file__)), 4)
+SPARK_CONFIG_LOCATION = SPARK_HOME + "conf/"
+
+installation_list=["python", "default-jdk", "maven", "curl", "python-pip"]
+
+JAVA_HOME = "/usr/lib/jvm/default-java/"
+
+HADOOP_DATA = "/data/hadoop/"
+HADOOP_HOME = "/usr/local/hadoop/"
+HADOOP_CONFIG_LOCATION = HADOOP_HOME + "etc/hadoop/"
+HADOOP_VERSION = "2.9.2"
+HADOOP_WEB_SOURCE = "http://apache.claz.org/hadoop/common/"
+
+master_file_name = "master"
+slaves_file_name = "slaves"
+
 def write_hadoop_config_file(name, xml):
-	f = open("/usr/local/hadoop/etc/hadoop/" + name, "w")
+	f = open(HADOOP_CONFIG_LOCATION + name, "w")
 	f.write(xml)
 	f.close()
 
 def write_spark_config_file(name, xml):
-	f = open("/spark-3.0.0-SNAPSHOT-bin-SparkFHE/conf/" + name, "w")
+	f = open(SPARK_CONFIG_LOCATION + name, "w")
 	f.write(xml)
 	f.close()
 
-master_file = open("master", "r")
-slaves_file = open("slaves", "r")
+master_file = open(master_file_name, "r")
+slaves_file = open(slaves_file_name, "r")
 master_address = master_file.read().strip()
 slaves_address = slaves_file.read().strip()
 
 master_file.close()
 slaves_file.close()
 
-os.system("apt-get update -y && apt-get install python -y && apt-get install -y default-jdk && apt-get install -y curl && apt-get install -y maven && apt-get install -y python-pip && pip install pyhdfs")
+os.system("apt-get update -y")
+
+for program_name in installation_list:
+  os.system("apt-get install -y %s"%(program_name))
+
+os.system("pip install pyhdfs")
 
 # Clear previous installation
-os.system("rm -rf /usr/local/hadoop-*/ && unlink /usr/local/hadoop && rm -rf /data/hadoop/")
-os.system("sed -i /JAVA_HOME/d /root/.bashrc && sed -i /HADOOP_HOME/d /root/.bashrc && sed -i /hadoop/d /root/.bashrc && sed -i /StrictHostKeyChecking/d /etc/ssh/ssh_config")
+os.system("rm -rf /usr/local/hadoop-*/ && unlink %s && rm -rf %s"%(HADOOP_HOME,HADOOP_DATA))
+os.system("sed -i /JAVA_HOME/d /root/.bashrc && sed -i /HADOOP_HOME/d /root/.bashrc && \
+ sed -i /hadoop/d /root/.bashrc && sed -i /StrictHostKeyChecking/d /etc/ssh/ssh_config")
 
 # Make Global Variables
-os.system("echo 'export JAVA_HOME=/usr/lib/jvm/default-java/' >> /root/.bashrc")
-os.system("echo 'export HADOOP_HOME=/usr/local/hadoop' >> /root/.bashrc")
-os.system("echo 'export PATH=$PATH:/usr/local/hadoop/bin/:/usr/local/hadoop/sbin/' >> /root/.bashrc")
+os.system("echo 'export JAVA_HOME=%s' >> /root/.bashrc"%(JAVA_HOME))
+os.system("echo 'export HADOOP_HOME=%s' >> /root/.bashrc"%(HADOOP_HOME))
+os.system("echo 'export PATH=$PATH:%sbin/:%ssbin/' >> /root/.bashrc"%(HADOOP_HOME, HADOOP_HOME))
 
 # Configure SSH
 os.system("echo 'StrictHostKeyChecking no' >> /etc/ssh/ssh_config")
 
 # Configure Data Folder for Hadoop
-os.system("mkdir -p /data/hadoop/node && mkdir -p /data/hadoop/data && mkdir -p /data/hadoop/name")
+os.system("mkdir -p %snode/ && -p %sdata/ && -p %sname/"%(HADOOP_DATA,HADOOP_DATA,HADOOP_DATA))
 
-if not os.path.exists("/hadoop-2.9.2.tar.gz"):
-    print("Downloading Hadoop 2.9.2....")
-    os.system("curl http://apache.claz.org/hadoop/common/hadoop-2.9.2/hadoop-2.9.2.tar.gz > /hadoop-2.9.2.tar.gz")
-    print("Download Hadoop 2.9.2 Successful...")
 
-print("Install Hadoop 2.9.2 .....")
-os.system("tar -xzf /hadoop-2.9.2.tar.gz -C /usr/local/ && ln -s /usr/local/hadoop-2.9.2/ /usr/local/hadoop")
-print("Finished Install Hadoop 2.9.2....")
+if not os.path.exists(os.path.join('/hadoop-', HADOOP_VERSION, ".tar.gz")):
+    print("Downloading Hadoop %s...."%(HADOOP_VERSION))
+    os.system("curl %shadoop-%s/hadoop-%s.tar.gz > /hadoop-%s.tar.gz"%(HADOOP_WEB_SOURCE, HADOOP_VERSION, HADOOP_VERSION, HADOOP_VERSION))
+    print("Download Hadoop %s Successful..."%(HADOOP_VERSION))
 
-print("Config Hadoop 2.9.2 ...")
-os.system("sed -i '/export JAVA_HOME/s/${JAVA_HOME}/\/usr\/lib\/jvm\/default-java\//g' /usr/local/hadoop/etc/hadoop/hadoop-env.sh")
+print("Install Hadoop %s ....."%(HADOOP_VERSION))
+HADOOP_HOME_TEMP = HADOOP_HOME[:-1]
+os.system("tar -xzf /hadoop-%s.tar.gz -C /usr/local/ && ln -s %s-%s/ %s"%(HADOOP_VERSION, HADOOP_HOME_TEMP, HADOOP_VERSION, HADOOP_HOME_TEMP))
+print("Finished Install Hadoop %s...."%(HADOOP_VERSION))
 
-#core-site.xml
+# hadoop-env.sh
+hadoopenvsh = """# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Set Hadoop-specific environment variables here.
+
+# The only required environment variable is JAVA_HOME.  All others are
+# optional.  When running a distributed configuration it is best to
+# set JAVA_HOME in this file, so that it is correctly defined on
+# remote nodes.
+
+# The java implementation to use.
+export JAVA_HOME=%(java_home)s
+
+# The jsvc implementation to use. Jsvc is required to run secure datanodes
+# that bind to privileged ports to provide authentication of data transfer
+# protocol.  Jsvc is not required if SASL is configured for authentication of
+# data transfer protocol using non-privileged ports.
+#export JSVC_HOME=${JSVC_HOME}
+
+export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-"/etc/hadoop"}
+
+# Extra Java CLASSPATH elements.  Automatically insert capacity-scheduler.
+for f in $HADOOP_HOME/contrib/capacity-scheduler/*.jar; do
+  if [ "$HADOOP_CLASSPATH" ]; then
+    export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$f
+  else
+    export HADOOP_CLASSPATH=$f
+  fi
+done
+
+# The maximum amount of heap to use, in MB. Default is 1000.
+#export HADOOP_HEAPSIZE=
+#export HADOOP_NAMENODE_INIT_HEAPSIZE=""
+
+# Enable extra debugging of Hadoop's JAAS binding, used to set up
+# Kerberos security.
+# export HADOOP_JAAS_DEBUG=true
+
+# Extra Java runtime options.  Empty by default.
+# For Kerberos debugging, an extended option set logs more invormation
+# export HADOOP_OPTS="-Djava.net.preferIPv4Stack=true -Dsun.security.krb5.debug=true -Dsun.security.spnego.debug"
+export HADOOP_OPTS="$HADOOP_OPTS -Djava.net.preferIPv4Stack=true"
+
+# Command specific options appended to HADOOP_OPTS when specified
+export HADOOP_NAMENODE_OPTS="-Dhadoop.security.logger=${HADOOP_SECURITY_LOGGER:-INFO,RFAS} -Dhdfs.audit.logger=${HDFS_AUDIT_LOGGER:-INFO,NullAppender} $HADOOP_NAMENODE_OPTS"
+export HADOOP_DATANODE_OPTS="-Dhadoop.security.logger=ERROR,RFAS $HADOOP_DATANODE_OPTS"
+
+export HADOOP_SECONDARYNAMENODE_OPTS="-Dhadoop.security.logger=${HADOOP_SECURITY_LOGGER:-INFO,RFAS} -Dhdfs.audit.logger=${HDFS_AUDIT_LOGGER:-INFO,NullAppender} $HADOOP_SECONDARYNAMENODE_OPTS"
+
+export HADOOP_NFS3_OPTS="$HADOOP_NFS3_OPTS"
+export HADOOP_PORTMAP_OPTS="-Xmx512m $HADOOP_PORTMAP_OPTS"
+
+# The following applies to multiple commands (fs, dfs, fsck, distcp etc)
+export HADOOP_CLIENT_OPTS="$HADOOP_CLIENT_OPTS"
+# set heap args when HADOOP_HEAPSIZE is empty
+if [ "$HADOOP_HEAPSIZE" = "" ]; then
+  export HADOOP_CLIENT_OPTS="-Xmx512m $HADOOP_CLIENT_OPTS"
+fi
+#HADOOP_JAVA_PLATFORM_OPTS="-XX:-UsePerfData $HADOOP_JAVA_PLATFORM_OPTS"
+
+# On secure datanodes, user to run the datanode as after dropping privileges.
+# This **MUST** be uncommented to enable secure HDFS if using privileged ports
+# to provide authentication of data transfer protocol.  This **MUST NOT** be
+# defined if SASL is configured for authentication of data transfer protocol
+# using non-privileged ports.
+export HADOOP_SECURE_DN_USER=${HADOOP_SECURE_DN_USER}
+
+# Where log files are stored.  $HADOOP_HOME/logs by default.
+#export HADOOP_LOG_DIR=${HADOOP_LOG_DIR}/$USER
+
+# Where log files are stored in the secure data environment.
+#export HADOOP_SECURE_DN_LOG_DIR=${HADOOP_LOG_DIR}/${HADOOP_HDFS_USER}
+
+###
+# HDFS Mover specific parameters
+###
+# Specify the JVM options to be used when starting the HDFS Mover.
+# These options will be appended to the options specified as HADOOP_OPTS
+# and therefore may override any similar flags set in HADOOP_OPTS
+#
+# export HADOOP_MOVER_OPTS=""
+
+###
+# Router-based HDFS Federation specific parameters
+# Specify the JVM options to be used when starting the RBF Routers.
+# These options will be appended to the options specified as HADOOP_OPTS
+# and therefore may override any similar flags set in HADOOP_OPTS
+#
+# export HADOOP_DFSROUTER_OPTS=""
+###
+
+###
+# Advanced Users Only!
+###
+
+# The directory where pid files are stored. /tmp by default.
+# NOTE: this should be set to a directory that can only be written to by 
+#       the user that will run the hadoop daemons.  Otherwise there is the
+#       potential for a symlink attack.
+export HADOOP_PID_DIR=${HADOOP_PID_DIR}
+export HADOOP_SECURE_DN_PID_DIR=${HADOOP_PID_DIR}
+
+# A string representing this instance of hadoop. $USER by default.
+export HADOOP_IDENT_STRING=$USER
+"""% dict(java_home=JAVA_HOME)
+
+write_hadoop_config_file("hadoop-env.sh",hadoopenvsh)
+
+
+# core-site.xml
 coreSiteXml = """<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
@@ -66,6 +220,8 @@ coreSiteXml = """<?xml version="1.0" encoding="UTF-8"?>
 
 write_hadoop_config_file("core-site.xml",coreSiteXml)
 
+
+# hdfs-site.xml
 hdfsSiteXml = """<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
@@ -97,6 +253,7 @@ hdfsSiteXml = """<?xml version="1.0" encoding="UTF-8"?>
 
 write_hadoop_config_file("hdfs-site.xml",hdfsSiteXml)
 
+# mapred-site.xml
 mapredSiteXml = """<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
@@ -108,7 +265,7 @@ mapredSiteXml = """<?xml version="1.0" encoding="UTF-8"?>
 
 write_hadoop_config_file("mapred-site.xml",mapredSiteXml)
 
-
+# yarn-site.xml or yarn-site-capacity.xml
 yarnSiteXml = """<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
@@ -156,6 +313,7 @@ yarnSiteXml = """<?xml version="1.0" encoding="UTF-8"?>
 write_hadoop_config_file("yarn-site.xml",yarnSiteXml)
 write_hadoop_config_file("yarn-site-capacity.xml",yarnSiteXml)
 
+# yarn-site-fair.xml
 yarnSitefairXml = """<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
@@ -225,6 +383,7 @@ yarnSitefairXml = """<?xml version="1.0" encoding="UTF-8"?>
 """ % dict(master_address=master_address)
 write_hadoop_config_file("yarn-site-fair.xml",yarnSitefairXml)
 
+# fair-scheduler.xml
 fairSchedulerXml = """<?xml version="1.0"?>
 <allocations>
   <queue name="sample_queue">
@@ -255,9 +414,9 @@ write_hadoop_config_file("slaves",slaves)
 os.system("sed -i /spark/d /root/.bashrc && sed -i /SPARK_HOME/d /root/.bashrc ")
 
 # Make Global Variables
-os.system("echo 'export SPARK_HOME=/spark-3.0.0-SNAPSHOT-bin-SparkFHE/conf' >> /root/.bashrc")
+os.system("echo 'export SPARK_HOME=%s' >> /root/.bashrc"%(SPARK_HOME))
 # os.system("echo 'export PATH=$PATH:/usr/local/spark/bin' >> /root/.bashrc")
-os.system("echo 'export PATH=$PATH:/spark-3.0.0-SNAPSHOT-bin-SparkFHE/bin/:/spark-3.0.0-SNAPSHOT-bin-SparkFHE/sbin/' >> /root/.bashrc")
+os.system("echo 'export PATH=$PATH:%sbin/:%ssbin/' >> /root/.bashrc"%(SPARK_HOME, SPARK_HOME))
 
 # # Install Spark
 # if not os.path.exists("/spark-2.3.2-bin-hadoop2.7.tgz"):
@@ -332,8 +491,8 @@ export SPARK_WORKER_MEMORY=1024m
 # - SPARK_PUBLIC_DNS, to set the public dns name of the master or workers
 
 # Generic options for the daemons used in the standalone deploy mode
-# - SPARK_CONF_DIR      Alternate conf dir. (Default: ${SPARK_HOME}/conf)
-# - SPARK_LOG_DIR       Where log files are stored.  (Default: ${SPARK_HOME}/logs)
+# - SPARK_CONF_DIR      Alternate conf dir. (Default: %(spark_home)s/conf)
+# - SPARK_LOG_DIR       Where log files are stored.  (Default: %(spark_home)s/logs)
 # - SPARK_PID_DIR       Where the pid file is stored. (Default: /tmp)
 # - SPARK_IDENT_STRING  A string representing this instance of spark. (Default: $USER)
 # - SPARK_NICENESS      The scheduling priority for daemons. (Default: 0)
@@ -342,7 +501,7 @@ export SPARK_WORKER_MEMORY=1024m
 # You might get better performance to enable these options if using native BLAS (see SPARK-21305).
 # - MKL_NUM_THREADS=1        Disable multi-threading of Intel MKL
 # - OPENBLAS_NUM_THREADS=1   Disable multi-threading of OpenBLAS
-""" % dict(hadoop_conf_address="/usr/local/hadoop/etc/hadoop")
+""" % dict(hadoop_conf_address=HADOOP_CONFIG_LOCATION, spark_home=SPARK_HOME)
 
 write_spark_config_file("spark-env.sh",sparkenvsh)
 
@@ -392,6 +551,8 @@ log4j.logger.org.apache.hadoop.hive.ql.exec.FunctionRegistry=ERROR
 
 write_spark_config_file("log4j.properties",log4jproperties)
 
+write_spark_config_file("hadoop-env.sh",hadoopenvsh)
+
 write_spark_config_file("core-site.xml",coreSiteXml)
 
 write_spark_config_file("hdfs-site.xml",hdfsSiteXml)
@@ -409,6 +570,5 @@ write_spark_config_file("master",master)
 
 write_spark_config_file("slaves",slaves)
 
-
 #format hdfs
-os.system("/usr/local/hadoop/bin/hdfs namenode -format")
+os.system("%sbin/hdfs namenode -format"%(HADOOP_HOME))

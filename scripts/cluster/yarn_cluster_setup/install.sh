@@ -1,11 +1,30 @@
 #!/bin/sh
 
 # Checking for no arguments passed
-if [ $# -lt 2 ]
+if [ $# -lt 1 ]
   then
-    echo "Insufficient number of arguments"
+    echo "Nodes Not Specified as Arguments"
     exit
 fi
+
+cluster=$1
+eval $(echo $cluster | awk '{split($0, array, ",");for(i in array)print "host_array["i"]="array[i]}')
+
+# function checkSSH() {
+#     echo "Checking SSH connections"
+#     for(( i=2;i<=${#host_array[@]};i++)) ; do
+#         ssh ${host_array[i]} "hostname"
+#         if [ $? -eq 0 ]
+#         then
+#             echo -e "Can SSH to ${host_array[i]}"
+#         else
+#         echo -e "Cannot SSH to ${host_array[i]}, please fix."
+#         exit 255
+#         fi
+#     done
+# }
+
+# checkSSH
 
 # Clear Content from Files
 rm master || true
@@ -16,40 +35,39 @@ touch slaves
 # Add Hyphen to the beginning of the slaves file
 echo "-" >> slaves
 
+# Save 1st argument in master file
 master_limit=1
+echo ${host_array[$master_limit]} >> master
 
-for (( c=1; c<=$#; c++ )); do
-    # Save First Address to master file
-    if [ "$c" -eq "$master_limit" ]; then
-        echo ${!c} >> master
-    # Save Remaining Addresses to slaves file
-    else
-        echo ${!c} >> slaves
-    fi
+# Save Remaining arguments in slaves file
+for(( i=2;i<=${#host_array[@]};i++)) ; do
+    echo ${host_array[i]} >> slaves
 done
 
 # Add Hyphen to the end of the slaves file
 echo "-" >> slaves
 
-root_folder_in_server=/spark-3.0.0-SNAPSHOT-bin-SparkFHE/SparkFHE-Addon/scripts/cluster/yarn_cluster_setup
+root_folder_in_server=`pwd`
+echo $root_folder_in_server
 
 # Setup Environment at node
 python3 ${root_folder_in_server}/setup.py
 
-Read addresses in slaves file
+# Read addresses in slaves file
 cat slaves | while read line
 
 do
     if [ "$line" = "-" ]; then
         echo "Skip $line"
     else
-        ssh root@$line -n "rm -rf ${root_folder_in_server} && mkdir ${root_folder_in_server}"
-        echo "Copy data to $line"
-        scp ${root_folder_in_server}/setup.py root@$line:${root_folder_in_server} && \
-        scp ${root_folder_in_server}/master root@$line:${root_folder_in_server} && \
-        scp ${root_folder_in_server}/slaves root@$line:${root_folder_in_server}
-        echo "Setup $line"
-        ssh root@$line -n "cd ${root_folder_in_server}"
+        # ssh root@$line -n "rm -rf ${root_folder_in_server} && mkdir ${root_folder_in_server}"
+        # echo "Copy data to $line"
+        # scp ${root_folder_in_server}/setup.py root@$line:${root_folder_in_server}
+        # scp ${root_folder_in_server}/master root@$line:${root_folder_in_server} && \
+        # scp ${root_folder_in_server}/slaves root@$line:${root_folder_in_server}
+        # echo "Setup $line"
+        # ssh root@$line -n "cd ${root_folder_in_server}"
+
         ssh root@$line -n "cd ${root_folder_in_server} && python3 setup.py"
         echo "Finished config node $line"
         echo "########################################################"
