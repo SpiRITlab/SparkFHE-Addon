@@ -41,7 +41,7 @@ install_boost(){
     rm "$BOOST_Version".tar.bz2
     mv $BOOST_Version $BOOST
     cd $BOOST
-     ./bootstrap.sh --with-libraries=$boost_libraries --prefix=$libSparkFHE_root
+    ./bootstrap.sh --with-libraries=$boost_libraries --prefix=$libSparkFHE_root
     ./b2 install
     echo "Installing $BOOST... (DONE)"
     touch $Marker # add the marker 
@@ -73,13 +73,13 @@ install_swig(){
     cd ..
 }
 
-install_jansson(){
-    echo "Installing $JANSSON..."
-    git clone https://github.com/akheron/jansson.git $JANSSON
-    cd $JANSSON
+download_and_install_rapidjson(){
+    echo "Installing $RapidJSON..."
+    git clone git@github.com:Tencent/rapidjson.git $RapidJSON
+    cd $RapidJSON
     cmake -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
-    make; make install
-    echo "Installing $JANSSON... (DONE)"
+    make install
+    echo "Installing $RapidJSON... (DONE)"
     touch $Marker # add the marker 
     cd ..
 }
@@ -160,6 +160,21 @@ download_and_install_helib(){
     cd ..
 }
 
+download_and_install_seal(){
+    echo "Installing $SEAL..."
+    git clone https://github.com/SpiRITlab/SEAL.git $SEAL
+    cd $SEAL
+    git checkout master-SparkFHE
+    cd src
+    cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
+    sudo make install
+    echo "Installing $SEAL... (DONE)"
+    cd ..
+    touch $Marker # add the marker 
+    cd ..
+}
+
 # =============================================================================
 # installing dependencies 
 # =============================================================================
@@ -172,7 +187,7 @@ download_and_install_helib(){
 BOOST="BOOST"
 if [ -d $BOOST ]; then
     if [ ! -f $BOOST/$Marker ]; then
-        rm -rf $BOOST. # remove the folder 
+        rm -rf $BOOST # remove the folder 
         install_boost
     else
         echo "BOOST library already installed"
@@ -186,7 +201,7 @@ fi
 GoogleTEST="GoogleTEST"
 if [ -d $GoogleTEST ]; then
     if [ ! -f $GoogleTEST/$Marker ]; then
-        rm -rf $GoogleTEST. # remove the folder
+        rm -rf $GoogleTEST # remove the folder
         install_googletest
     else
         echo "GoogleTEST already installed"
@@ -203,7 +218,7 @@ fi
 SWIG="SWIG"
 if [ -d $SWIG ]; then
     if [ ! -f $SWIG/$Marker ]; then
-        rm -rf $SWIG. # remove the folder
+        rm -rf $SWIG # remove the folder
         install_swig
     else
         echo "SWIG already installed"
@@ -212,25 +227,26 @@ else
     install_swig
 fi
 
-# Jansson is a C library for encoding, decoding and manipulating JSON data.
-JANSSON="JANSSON"
-if [ -d $JANSSON ]; then
-    if [ ! -f $JANSSON/$Marker ]; then
-        rm -rf $JANSSON. # remove the folder
-        install_jansson
+# RapidJSON is a JSON parser and generator for C++. It was inspired by RapidXml. 
+RapidJSON="RapidJSON"
+if [ -d $RapidJSON ]; then
+    if [ ! -f $RapidJSON/$Marker ]; then
+        rm -rf $RapidJSON # remove the folder 
+        download_and_install_rapidjson
     else
-        echo "JANSSON already installed"
+        echo "RapidJSON already installed"
     fi
 else
-    install_jansson
+    download_and_install_rapidjson
 fi
+
 
 # The GMP package contains math libraries. These have useful functions 
 # for arbitrary precision arithmetic.
 GMP="GMP"
 if [ -d $GMP ]; then
     if [ ! -f $GMP/$Marker ]; then
-        rm -rf $GMP. # remove the folder
+        rm -rf $GMP # remove the folder
         install_gmp
     else
         echo "GMP already installed"
@@ -245,7 +261,7 @@ fi
 GF2X="GF2X"
 if [ -d $GF2X ]; then
     if [ ! -f $GF2X/$Marker ]; then
-        rm -rf $GF2X. # remove the folder
+        rm -rf $GF2X # remove the folder
         download_and_install_gf2x
     else
         echo "GF2X already installed"
@@ -261,7 +277,7 @@ fi
 NTL="NTL"
 if [ -d $NTL ]; then
     if [ ! -f $NTL/$Marker ]; then
-        rm -rf $NTL. # remove the folder
+        rm -rf $NTL # remove the folder
         download_and_install_ntl
     else
         echo "NTL already installed"
@@ -274,7 +290,7 @@ fi
 ARMADILLO="ARMADILLO"
 if [ -d $ARMADILLO ]; then
     if [ ! -f $ARMADILLO/$Marker ]; then
-        rm -rf $ARMADILLO. # remove the folder
+        rm -rf $ARMADILLO # remove the folder
         download_and_install_armadillo
     else
         echo "ARMADILLO already installed"
@@ -287,7 +303,7 @@ fi
 HElib="HElib"
 if [ -d $HElib ]; then
      if [ ! -f $HElib/$Marker ]; then
-        rm -rf $HElib. # remove the folder
+        rm -rf $HElib # remove the folder
         download_and_install_helib
     else
         echo "HElib already installed"
@@ -299,30 +315,17 @@ fi
 # download and install SEAL; due to copyright reason we can automatically fetch the package.
 # download from here, https://www.microsoft.com/en-us/research/project/simple-encrypted-arithmetic-library/
 # place the folder into deps and rename to "SEAL"
-# SEAL="SEAL"
-# if [ -d $SEAL ]; then
-#    echo "Installing $SEAL..."
-#    cd $SEAL/$SEAL
-#    cmake .
-#    make
-#    echo "Installing $SEAL... (DONE)"
-#    cd ../..
-# else
-#    echo "Please download Seal from https://www.microsoft.com/en-us/research/project/simple-encrypted-arithmetic-library/ "
-#    echo "and put and rename the library to deps/SEAL before continue."
-#    exit
-# fi
-
-
-#PALISADE="PALISADE"
-#if [ ! -d $PALISADE ]; then
-#    echo "Installing $PALISADE..."
-#    git clone https://git.njit.edu/palisade/PALISADE.git $PALISADE
-#    cd $PALISADE
-#    make CXX=g++-8 LD=g++-8
-#    echo "Installing $PALISADE... (DONE)"
-#    cd ..
-#fi
+SEAL="SEAL"
+if [ -d $SEAL ]; then
+    if [ ! -f $SEAL/$Marker ]; then
+        rm -rf $SEAL # remove the folder
+        download_and_install_seal 
+    else
+        echo "SEAL already installed"
+    fi
+else
+   download_and_install_seal
+fi
 
 
 # Uncomment the follow code to install AWS SDK
