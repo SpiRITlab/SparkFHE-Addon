@@ -166,9 +166,9 @@ download_and_install_seal(){
     cd $SEAL
     git checkout master-SparkFHE
     cd src
-    cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
-    sudo make install
+    make install
     echo "Installing $SEAL... (DONE)"
     cd ..
     touch $Marker # add the marker 
@@ -346,6 +346,4 @@ fi
 
 
 trap EXIT
-
-trap - EXIT
 
