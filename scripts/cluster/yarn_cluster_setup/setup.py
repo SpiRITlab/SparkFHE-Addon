@@ -418,16 +418,6 @@ os.system("echo 'export SPARK_HOME=%s' >> /root/.bashrc"%(SPARK_HOME))
 # os.system("echo 'export PATH=$PATH:/usr/local/spark/bin' >> /root/.bashrc")
 os.system("echo 'export PATH=$PATH:%sbin/:%ssbin/' >> /root/.bashrc"%(SPARK_HOME, SPARK_HOME))
 
-# # Install Spark
-# if not os.path.exists("/spark-2.3.2-bin-hadoop2.7.tgz"):
-#     print("Downloading Spark 2.3.2....")
-#     os.system("curl https://www-us.apache.org/dist/spark/spark-2.3.2/spark-2.3.2-bin-hadoop2.7.tgz > /spark-2.3.2-bin-hadoop2.7.tgz")
-#     print("Download Spark 2.3.2 Successful...")
-
-# print("Install Spark 2.3.2.....")
-# os.system("tar -xzf /spark-2.3.2-bin-hadoop2.7.tgz -C /usr/local/ && ln -s /usr/local/spark-2.3.2-bin-hadoop2.7/ /usr/local/spark")
-# print("Finished Spark 2.3.2.....")
-
 # spark-env.sh
 sparkenvsh = """#!/usr/bin/env bash
 

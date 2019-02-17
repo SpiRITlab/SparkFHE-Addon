@@ -29,15 +29,15 @@ Use the link generated after successful completion of cluster building to view t
 
 YARN Interface:
 
-http://master.experiment-name.iotx-pg0.utah.cloudlab.us:8088/cluster
+http://master.experiment-name.iotx-pg0.region.cloudlab.us:8088/cluster
 
 Spark Interface:
 
-http://master.experiment-name.iotx-pg0.utah.cloudlab.us:8080/
+http://master.experiment-name.iotx-pg0.region.cloudlab.us:8080/
 
 Namenode Interface:
 
-http://master.experiment-name.iotx-pg0.utah.cloudlab.us:50070/
+http://master.experiment-name.iotx-pg0.region.cloudlab.us:50070/
 
 Datanode Interface:
 
@@ -45,7 +45,7 @@ http://username.region.cloudlab.us:50075
 
 JobMaster Interface:
 
-http://master.experiment-name.iotx-pg0.utah.cloudlab.us:19888/jobhistory
+http://master.experiment-name.iotx-pg0.region.cloudlab.us:19888/jobhistory
 
 # Stopping the Cluster
 ```
