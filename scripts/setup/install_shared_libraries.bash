@@ -75,7 +75,7 @@ install_swig(){
 
 download_and_install_rapidjson(){
     echo "Installing $RapidJSON..."
-    git clone git@github.com:Tencent/rapidjson.git $RapidJSON
+    git clone https://github.com/Tencent/rapidjson.git $RapidJSON
     cd $RapidJSON
     cmake -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make install
