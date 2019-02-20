@@ -32,9 +32,9 @@ checkSSH
 
 current_directory=`pwd`
 
-rm $current_directory/configs/master || true
+rm -rf $current_directory/configs/master || true
 touch $current_directory/configs/master
-rm $current_directory/configs/slaves || true
+rm -rf $current_directory/configs/slaves || true
 touch $current_directory/configs/slaves
 
 # Save 1st argument in master file
@@ -64,6 +64,7 @@ do
     if [ "$line" = "-" ]; then
         echo "Skip $line"
     else
+        # Move master and slaves file to worker nodes
         scp $current_directory/configs/master root@$line:$current_directory/configs
         scp $current_directory/configs/slaves root@$line:$current_directory/configs
         echo "Installing on $line"
