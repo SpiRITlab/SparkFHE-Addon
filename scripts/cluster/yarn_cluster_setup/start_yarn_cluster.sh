@@ -17,3 +17,5 @@ jps
 
 echo "Get basic filesystem information and statistics."
 /usr/local/hadoop/bin/hdfs dfsadmin -report
+
+echo "Yarn Cluster is Active"
