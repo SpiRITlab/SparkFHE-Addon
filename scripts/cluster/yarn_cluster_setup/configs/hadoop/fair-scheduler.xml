@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<allocations>
+  <queue name="sample_queue">
+    <minResources>10000 mb,0vcores</minResources>
+    <maxResources>90000 mb,0vcores</maxResources>
+    <maxRunningApps>50</maxRunningApps>
+    <weight>2.0</weight>
+    <schedulingPolicy>fair</schedulingPolicy>
+    <queue name="sample_sub_queue">
+      <minResources>5000 mb,0vcores</minResources>
+    </queue>
+  </queue>
+  <user name="sample_user">
+    <maxRunningApps>30</maxRunningApps>
+  </user>
+  <userMaxAppsDefault>5</userMaxAppsDefault>
+</allocations>
