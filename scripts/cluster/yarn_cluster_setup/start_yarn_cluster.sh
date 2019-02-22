@@ -1,5 +1,9 @@
 #!/bin/bash
 
+export HADOOP_HOME=/usr/local/hadoop
+export PATH=$PATH:/usr/local/hadoop/bin:/usr/local/spark/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HADOOP_HOME/lib/native/
+
 echo "STARTING HADOOP SERVICES"
 /usr/local/hadoop/sbin/start-dfs.sh
 
