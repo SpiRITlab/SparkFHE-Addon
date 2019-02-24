@@ -10,3 +10,5 @@ echo "SPARK TEST"
     --executor-cores 1 \
     /spark-3.0.0-SNAPSHOT-bin-SparkFHE/examples/jars/spark-examples*.jar \
     10
+
+echo "Stop Cluster If not in Use"

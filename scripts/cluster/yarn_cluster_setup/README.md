@@ -15,7 +15,7 @@ Specify the hostnames of nodes as arguments.
 sudo bash install_yarn_cluster.sh master,worker1,worker2 ...
 ```
 
-# Start Yarn Spark Cluster
+# Start Yarn Spark Cluster and Run Spark Job on Master
 Cluster can only be started on master node after installation is complete on all nodes and configuration files for Yarn and Spark are placed in correct folders.
 ```
 sudo bash start_yarn_cluster.sh
