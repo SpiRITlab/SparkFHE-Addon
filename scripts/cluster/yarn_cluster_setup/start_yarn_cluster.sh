@@ -2,22 +2,24 @@
 
 echo "STARTING HADOOP SERVICES"
 
-$HADOOP_HOME/sbin/start-dfs.sh
+/usr/local/hadoop/sbin/start-dfs.sh
 
-$HADOOP_HOME/sbin/start-yarn.sh
+/usr/local/hadoop/sbin/start-yarn.sh
 
-$HADOOP_HOME/sbin/mr-jobhistory-daemon.sh start historyserver
+/usr/local/hadoop/sbin/mr-jobhistory-daemon.sh start historyserver
 
-$HADOOP_HOME/bin/hdfs dfsadmin -safemode leave
+# /usr/local/hadoop/bin/hdfs dfsadmin -safemode leave
+
+# /usr/local/hadoop/bin/hdfs dfsadmin
 
 echo "STARTING SPARK SERVICES"
-SPARK_HOME/sbin/start-all.sh
+/spark-3.0.0-SNAPSHOT-bin-SparkFHE/sbin/start-all.sh
 
 echo "RUN jps - Java Virtual Machine Process Status Tool"
 jps
 
 echo "Get basic filesystem information and statistics."
-$HADOOP_HOME/bin/hdfs dfsadmin -report
+/usr/local/hadoop/bin/hdfs dfsadmin -report
 
 echo "Yarn Cluster is Active"
 

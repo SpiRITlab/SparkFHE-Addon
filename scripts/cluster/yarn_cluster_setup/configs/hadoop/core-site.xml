@@ -11,4 +11,9 @@
 	<name>dfs.namenode.rpc-bind-host</name>
 	<value>0.0.0.0</value>
     </property>
+    <property>
+    <name>hadoop.security.authorization</name>
+    <value>true</value>
+    <description>Service level authorization params.</description>
+    </property>
 </configuration>

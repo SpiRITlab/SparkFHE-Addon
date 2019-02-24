@@ -2,14 +2,14 @@
 
 echo -e "STOPPING SPARK SERVICES"
 
-$SPARK_HOME/sbin/stop-all.sh
+/spark-3.0.0-SNAPSHOT-bin-SparkFHE/sbin/stop-all.sh
 
 echo -e "STOPPING HADOOP SERVICES"
 
-$HADOOP_HOME/sbin/mr-jobhistory-daemon.sh stop historyserver
+/usr/local/hadoop/sbin/mr-jobhistory-daemon.sh stop historyserver
 
-$HADOOP_HOME/sbin/stop-dfs.sh
+/usr/local/hadoop/sbin/stop-dfs.sh
 
-$HADOOP_HOME/sbin/stop-yarn.sh
+/usr/local/hadoop/sbin/stop-yarn.sh
 
 echo "Hadoop Cluster is Inactive Now"
