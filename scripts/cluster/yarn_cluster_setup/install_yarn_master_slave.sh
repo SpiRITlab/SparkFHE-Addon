@@ -7,8 +7,7 @@ HADOOP_SYMLINK=/usr/local/hadoop
 HADOOP_CONFIG_LOCATION=${HADOOP_HOME_INFILE}etc/hadoop/
 HADOOP_VERSION=2.9.2
 HADOOP_WEB_SOURCE=https://www-us.apache.org/dist/hadoop/common/
-ROOT_VARIABLES_ADDRESS=/root/.bashrc
-USER_VARIABLES_ADDRESS=~/.bashrc
+ROOT_VARIABLES_ADDRESS=/etc/profile
 
 # Install Pre-Reqs
 apt-get update -y
@@ -19,8 +18,8 @@ unlink ${HADOOP_SYMLINK} && rm -rf ${HADOOP_DATA}
 rm -rf /usr/local/hadoop-*/
 
 # Remove Global Variables
-sed -i /JAVA_HOME/d $ROOT_VARIABLES_ADDRESS && sed -i /HADOOP_HOME/d $ROOT_VARIABLES_ADDRESS
-sed -i /hadoop/d $ROOT_VARIABLES_ADDRESS && sed -i /default-java/d $ROOT_VARIABLES_ADDRESS
+sed -i /JAVA_HOME/d $ROOT_VARIABLES_ADDRESS && sed -i /default-java/d $ROOT_VARIABLES_ADDRESS
+sed -i /HADOOP_HOME/d $ROOT_VARIABLES_ADDRESS && sed -i /hadoop/d $ROOT_VARIABLES_ADDRESS
 
 # Make Hadoop Global Variables for User and Root
 echo "export JAVA_HOME="$JAVA_HOME_INFILE >> $ROOT_VARIABLES_ADDRESS
