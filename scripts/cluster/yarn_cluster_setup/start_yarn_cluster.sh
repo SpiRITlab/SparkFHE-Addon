@@ -23,9 +23,11 @@ $HADOOP_HOME/bin/hdfs dfsadmin -report
 
 echo "Yarn Cluster is Active"
 
-master_node_ip_address=`hostname -i`
+echo "Follow the instructions for Web Interfaces specified in the Readme page"
 
-echo "YARN Interface Available At: "$master_node_ip_address":8088/"
-echo "Spark Interface Available At: "$master_node_ip_address":8080/"
-echo "NameNode Interface Available At: "$master_node_ip_address":50070/"
-echo "Job Master Interface Available At: "$master_node_ip_address":19888/"
+master_node_ip_address_internal=`hostname -I | awk '{print $1}'`
+
+echo "YARN Interface Available At: "$master_node_ip_address_internal":8088/"
+echo "Spark Interface Available At: "$master_node_ip_address_internal":8080/"
+echo "NameNode Interface Available At: "$master_node_ip_address_internal":50070/"
+echo "Job Master Interface Available At: "$master_node_ip_address_internal":19888/"

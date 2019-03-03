@@ -7,11 +7,11 @@
    </property>
     <property>
         <name>dfs.namenode.http-address</name>
-        <value>0.0.0.0:50070</value>
+        <value>master:50070</value>
     </property>
     <property>
         <name>dfs.namenode.secondary.http-address</name>
-        <value>0.0.0.0:50090</value>
+        <value>master:50090</value>
     </property>
     <property>
         <name>dfs.replication</name>
@@ -29,4 +29,8 @@
         <name>dfs.webhdfs.enabled</name>
         <value>false</value>
     </property>
+    <!-- <property>
+        <name>dfs.namenode.acls.enabled</name>
+        <value>true</value>
+    </property> -->
 </configuration>

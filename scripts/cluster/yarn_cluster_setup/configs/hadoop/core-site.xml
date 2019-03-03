@@ -8,12 +8,12 @@
     </property>
     <!-- default RPC IP，and use 0.0.0.0 to represent all ips-->
     <property>
-	<name>dfs.namenode.rpc-bind-host</name>
-	<value>0.0.0.0</value>
+	   <name>dfs.namenode.rpc-bind-host</name>
+	   <value>master</value>
     </property>
-    <property>
-    <name>hadoop.security.authorization</name>
-    <value>true</value>
-    <description>Service level authorization params.</description>
-    </property>
+    <!-- <property>
+        <name>hadoop.security.authorization</name>
+        <value>true</value>
+        <description>Service level authorization params.</description>
+    </property> -->
 </configuration>

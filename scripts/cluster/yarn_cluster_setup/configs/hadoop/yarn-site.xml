@@ -27,11 +27,11 @@
   </property>
   <property>
      <name>yarn.resourcemanager.admin.address</name>
-     <value>0.0.0.0:8033</value>
+     <value>master:8033</value>
    </property>
    <property>
       <name>yarn.resourcemanager.webapp.address</name>
-      <value>0.0.0.0:8088</value>
+      <value>master:8088</value>
    </property>
    <property>
       <name>mapreduce.jobhistory.address</name>
@@ -39,6 +39,10 @@
    </property>
    <property>
       <name>mapreduce.jobhistory.webapp.address</name>
-      <value>0.0.0.0:19888</value>
+      <value>master:19888</value>
    </property>
+   <!--  <property>
+      <name>yarn.acl.enable</name>
+      <value>true</value>
+   </property> -->
 </configuration>
