@@ -82,5 +82,3 @@ cp $current_directory/configs/slaves $SPARK_CONFIG_LOCATION
 
 # Format Namenode
 $HADOOP_HOME_INFILE/bin/hdfs namenode -format
-
-echo "Run the following on master node: sudo bash start_yarn_cluster.sh"

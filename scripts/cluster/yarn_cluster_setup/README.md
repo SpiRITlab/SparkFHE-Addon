@@ -1,32 +1,30 @@
 
 Setup an experiment on Cloudlab using the SparkFHE-Dist-Ubuntu18.04 image. Use the Wisconsin server.
 
-Please note that the scripts are designed to run on Master Node.
-
-# SSH into Master Node
+# SSH into Client Node
 SSH into the master node and navigate to the address specified below:
 ```
 cd /spark-3.0.0-SNAPSHOT-bin-SparkFHE/SparkFHE-Addon/scripts/cluster/yarn_cluster_setup
 ```
 
-# Install Hadoop and Configure Spark on all nodes through Master Node
+# Install Hadoop and Configure Spark on all nodes through Client Node
 Specify the hostnames of nodes as arguments.
 ```
 sudo bash install_yarn_cluster.sh master,worker1,worker2 ...
 ```
 
-# Start Yarn Spark Cluster and Run Spark Job on Master
+# Start Yarn Spark Cluster and Run Spark Job on Master(Step Automatic For Now)
 Cluster can only be started on master node after installation is complete on all nodes and configuration files for Yarn and Spark are placed in correct folders.
 ```
 sudo bash start_yarn_cluster.sh
 ```
 
-# Run Test Spark Job on Master
-Use the link generated after successful completion of cluster building to view the web interface for Yarn.
+# Run Test Spark Job on Master Through Client(Step Automatic For Now)
 ```
 cd test_scripts
 sudo bash run_spark_test_job_pi.sh
 ```
+If the job is successfulll completed, final status is 'SUCCEEDED'. The links generated can be used by following the guide specified below.
 
 ## Web Interfaces:
 
@@ -95,7 +93,7 @@ To use the Mozilla Firefox browser regularly, Select 'No Proxy' in Network Setti
 
 Stop the SSH tunneling by Closing the Terminal Window or Hit Ctrl + C in the terminal window.
 
-# Stop the Cluster
+# Stop the Cluster(Step Automatic For Now)
 ```
 cd ..
 sudo bash stop_yarn_job.sh

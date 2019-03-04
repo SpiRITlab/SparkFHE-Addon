@@ -13,7 +13,7 @@ eval $(echo $cluster | awk '{split($0, array, ",");for(i in array)print "host_ar
 
 function checkSSH() {
     echo "Checking SSH connections"
-    for(( i=2;i<=${#host_array[@]};i++)) ; do
+    for(( i=1;i<=${#host_array[@]};i++)) ; do
         ssh ${host_array[i]} "hostname"
         if [ $? -eq 0 ]
         then
@@ -27,10 +27,10 @@ function checkSSH() {
 
 checkSSH
 
+current_directory=`pwd`
+
 # Make Master and Slaves File
 # Clear Content from Files
-
-current_directory=`pwd`
 
 rm -rf $current_directory/configs/master || true
 touch $current_directory/configs/master
@@ -46,30 +46,17 @@ for(( i=2;i<=${#host_array[@]};i++)) ; do
     echo ${host_array[i]} >> $current_directory/configs/slaves
 done
 
-echo =========================================================
-echo "Setup Yarn Master"
-echo =========================================================
-echo "Installing Yarn-master"
-# Setup Environment at node
-bash install_yarn_master_slave.sh
-
-echo =========================================================
-echo "Setting up Yarn Slaves"
-echo =========================================================
-
-# Read addresses in slaves file
-cat $current_directory/configs/slaves | while read line
-
-do
-    if [ "$line" = "-" ]; then
-        echo "Skip $line"
-    else
-        # Move master and slaves file to worker nodes
-        scp $current_directory/configs/master root@$line:$current_directory/configs
-        scp $current_directory/configs/slaves root@$line:$current_directory/configs
-        echo "Installing on $line"
-        echo "Installing Yarn-slave"
-        ssh root@$line -n "cd ${current_directory} && sudo bash install_yarn_master_slave.sh"
-        echo "Finished config node $line"
-    fi
+# Move Master and Slaves File on all Nodes
+# Install Cluster on all Nodes
+for(( i=1;i<=${#host_array[@]};i++)) ; do
+    scp $current_directory/configs/master ${host_array[i]}:$current_directory/configs
+    scp $current_directory/configs/slaves ${host_array[i]}:$current_directory/configs
+    echo "Installing on "${host_array[i]}
+    ssh root@${host_array[i]} -n "cd ${current_directory} && sudo bash install_yarn_master_slave.sh"
+    echo "Finished configuration on "${host_array[i]}
 done
+
+# Trigger Scripts on Master Node
+ssh root@${host_array[$master_limit]} -n "cd ${current_directory} && sudo bash start_yarn_cluster.sh"
+ssh root@${host_array[$master_limit]} -n "cd ${current_directory}/test_scripts && sudo bash run_spark_test_job_pi.sh"
+ssh root@${host_array[$master_limit]} -n "cd ${current_directory} && sudo bash stop_yarn_cluster.sh"
