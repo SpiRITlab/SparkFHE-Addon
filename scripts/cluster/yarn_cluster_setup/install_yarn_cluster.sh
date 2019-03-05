@@ -44,17 +44,20 @@ function checkSSH() {
 
 checkSSH
 
-# Move Master and Slaves File on all Nodes
+# Move Config Files and install_yarn_master_slave.sh
 # Install Cluster on all Nodes
 for(( i=0;i<${#host_array[@]};i++)) ; do
-    scp $current_directory/configs/master ${host_array[i]}:$current_directory/configs
-    scp $current_directory/configs/slaves ${host_array[i]}:$current_directory/configs
+    # Assume that yarn_cluster_setup folder is present in all nodes
+    rsync -a --rsync-path="sudo rsync" $current_directory/configs/ ${host_array[i]}:$current_directory/configs/
+    scp $current_directory/install_yarn_master_slave.sh ${host_array[i]}:$current_directory/
     echo "Installing on "${host_array[i]}
     ssh root@${host_array[i]} -n "cd ${current_directory} && sudo bash install_yarn_master_slave.sh"
     echo "Finished configuration on "${host_array[i]}
     echo ""
 done
 
+actual_master_name=`cat ${current_directory}/configs/master`
+
 # Save Master Node Address as Global Variable
 sed -i /MASTER_HOSTNAME/d $ROOT_VARIABLES_ADDRESS
-echo "export MASTER_HOSTNAME="${host_array[$master_index_in_host_array]} >> $ROOT_VARIABLES_ADDRESS
+echo "export MASTER_HOSTNAME="$actual_master_name >> $ROOT_VARIABLES_ADDRESS
