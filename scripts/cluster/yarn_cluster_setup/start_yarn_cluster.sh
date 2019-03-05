@@ -1,33 +1,43 @@
 #!/bin/bash
 
+current_hostname=`hostname`
 source /etc/profile
 
-echo "STARTING HADOOP SERVICES"
+if [[ $current_hostname == *"client"* ]]; then
+	echo "Commands running from correct node"
+	ssh $MASTER_HOSTNAME '
+		source /etc/profile
 
-$HADOOP_HOME/sbin/start-dfs.sh
+		echo "STARTING HADOOP SERVICES"
 
-$HADOOP_HOME/sbin/start-yarn.sh
+		$HADOOP_HOME/sbin/start-dfs.sh
 
-$HADOOP_HOME/sbin/mr-jobhistory-daemon.sh start historyserver
+		$HADOOP_HOME/sbin/start-yarn.sh
 
-$HADOOP_HOME/bin/hdfs dfsadmin -safemode leave
+		$HADOOP_HOME/sbin/mr-jobhistory-daemon.sh start historyserver
 
-echo "STARTING SPARK SERVICES"
-$SPARK_HOME/sbin/start-all.sh
+		$HADOOP_HOME/bin/hdfs dfsadmin -safemode leave
 
-echo "RUN jps - Java Virtual Machine Process Status Tool"
-jps
+		echo "STARTING SPARK SERVICES"
+		$SPARK_HOME/sbin/start-all.sh
 
-echo "Get basic filesystem information and statistics."
-$HADOOP_HOME/bin/hdfs dfsadmin -report
+		echo "RUN jps - Java Virtual Machine Process Status Tool"
+		jps
 
-echo "Yarn Cluster is Active"
+		echo "Get basic filesystem information and statistics."
+		$HADOOP_HOME/bin/hdfs dfsadmin -report
 
-echo "Follow the instructions for Web Interfaces specified in the Readme page"
+		echo "Yarn Cluster is Active"
 
-master_node_ip_address_internal=`hostname -I | awk '{print $1}'`
+		echo "Follow the instructions for Web Interfaces specified in the Readme page"
 
-echo "YARN Interface Available At: "$master_node_ip_address_internal":8088/"
-echo "Spark Interface Available At: "$master_node_ip_address_internal":8080/"
-echo "NameNode Interface Available At: "$master_node_ip_address_internal":50070/"
-echo "Job Master Interface Available At: "$master_node_ip_address_internal":19888/"
+		master_node_ip_address_internal=`hostname -I | sed "'"s/\s.*$//"'"`
+
+		echo "YARN Interface Available At: "$master_node_ip_address_internal":8088/"
+		echo "Spark Interface Available At: "$master_node_ip_address_internal":8080/"
+		echo "NameNode Interface Available At: "$master_node_ip_address_internal":50070/"
+		echo "Job Master Interface Available At: "$master_node_ip_address_internal":19888/"
+	'
+else
+	echo "This code can run ONLY on Client Node"
+fi
