@@ -1,9 +1,9 @@
 #!/bin/bash
 
-current_hostname=`hostname`
-source /etc/profile
+MASTER_HOSTNAME=master
+CLIENT_HOSTNAME=client
 
-if [[ $current_hostname == *"client"* ]]; then
+if [[ `hostname` == *${CLIENT_HOSTNAME}* ]]; then
 	echo "Commands running from correct node"
 	ssh $MASTER_HOSTNAME '
 		source /etc/profile
