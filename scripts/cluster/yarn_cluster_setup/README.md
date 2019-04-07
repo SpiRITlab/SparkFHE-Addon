@@ -1,5 +1,5 @@
 
-Setup an experiment on Cloudlab using the SparkFHE-YARN-Client-Ubun18.04 image. Use the Wisconsin server.
+Setup an experiment on Cloudlab using the SparkFHE-YARN-Client-Ub18-HDFS image. Use the Wisconsin server.
 
 Please note that all scripts are designed to run on Client node.
 
