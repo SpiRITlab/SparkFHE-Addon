@@ -7,7 +7,7 @@
    </property>
     <property>
         <name>dfs.namenode.http-address</name>
-        <value>0.0.0.0:50070</value>
+        <value>master:50070</value>
     </property>
     <property>
         <name>dfs.namenode.secondary.http-address</name>
@@ -27,7 +27,7 @@
     </property>
     <property>
         <name>dfs.webhdfs.enabled</name>
-        <value>false</value>
+        <value>true</value>
     </property>
     <!-- <property>
         <name>dfs.namenode.acls.enabled</name>

@@ -1,5 +1,5 @@
 
-Setup an experiment on Cloudlab using the SparkFHE-YARN-Client-Ub18-HDFS image. Use the Wisconsin server.
+Setup an experiment on Cloudlab using the SparkFHE-YARN-Client-Ubun18.04 image. Use the Wisconsin server.
 
 Please note that all scripts are designed to run on Client node.
 
@@ -21,7 +21,7 @@ SSH into the Client node and navigate to the address specified below:
 cd /spark-3.0.0-SNAPSHOT-bin-SparkFHE/SparkFHE-Addon/scripts/cluster/yarn_cluster_setup
 ```
 
-# Start Yarn Spark Cluster from Client Node
+# Start Yarn Spark Cluster and HDFS from Client Node
 Cluster can only be started on master node after installation is complete on all nodes and configuration files for Yarn and Spark are placed in correct folders.
 ```
 sudo bash start_yarn_cluster.sh
