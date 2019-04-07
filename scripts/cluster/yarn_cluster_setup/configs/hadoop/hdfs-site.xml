@@ -7,7 +7,7 @@
    </property>
     <property>
         <name>dfs.namenode.http-address</name>
-        <value>master:50070</value>
+        <value>0.0.0.0:50070</value>
     </property>
     <property>
         <name>dfs.namenode.secondary.http-address</name>
@@ -25,10 +25,10 @@
         <name>dfs.datanode.data.dir</name>
         <value>/data/hadoop/data</value>
     </property>
-<!--     <property>
+    <property>
         <name>dfs.webhdfs.enabled</name>
         <value>false</value>
-    </property> -->
+    </property>
     <!-- <property>
         <name>dfs.namenode.acls.enabled</name>
         <value>true</value>
