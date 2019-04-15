@@ -7,11 +7,18 @@
    </property>
     <property>
         <name>dfs.namenode.http-address</name>
-        <value>master:50070</value>
+        <!-- Value correct for master/namenode -->
+        <!-- Add Public IP of master for every worker -->
+        <!-- Correct Value: 129.21.30.88:50070 -->
+        <value>0.0.0.0:50070</value>
     </property>
     <property>
         <name>dfs.namenode.secondary.http-address</name>
-        <value>master:50090</value>
+        <value>129.21.30.88:50090</value>
+    </property>
+    <property> 
+        <name>dfs.namenode.datanode.registration.ip-hostname-check</name> 
+        <value>false</value> 
     </property>
     <property>
         <name>dfs.replication</name>
