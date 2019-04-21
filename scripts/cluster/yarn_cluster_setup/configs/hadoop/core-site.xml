@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
-    <!-- Default HDFS ip and port -->
     <property>
          <name>fs.defaultFS</name>
-         <value>hdfs://master:9000</value>
+         <value>hdfs://master-public-ip:9000</value>
     </property>
-    <!-- default RPC IP，and use 0.0.0.0 to represent all ips-->
     <property>
 	   <name>dfs.namenode.rpc-bind-host</name>
-	   <value>master</value>
+	   <value>master-public-ip</value>
     </property>
-    <!-- <property>
-        <name>hadoop.security.authorization</name>
-        <value>true</value>
-        <description>Service level authorization params.</description>
-    </property> -->
 </configuration>

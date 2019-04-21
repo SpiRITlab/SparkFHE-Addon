@@ -32,7 +32,10 @@ function checkSSH() {
     echo "Checking SSH connections"
     for(( i=0;i<${#host_array[@]};i++)) ; do
         echo ${host_array[i]}
-        ssh root@${host_array[i]} "hostname"
+        PUBLIC_IP=`ssh root@${host_array[i]} "hostname -i"`
+        # Replace internal hostnames with public IP
+        sed -i "s/${host_array[i]}/${PUBLIC_IP}/g" "$current_directory/configs/master"
+        sed -i "s/${host_array[i]}/${PUBLIC_IP}/g" "$current_directory/configs/slaves"
         if [ $? -eq 0 ]
         then
             echo -e "Can SSH to ${host_array[i]}"
@@ -45,12 +48,13 @@ function checkSSH() {
 
 checkSSH
 
+MASTER_PUBLIC_IP=`hostname -i`
+
 echo =========================================================
 echo "Setup Yarn Master"
 echo =========================================================
 echo "Installing Yarn-master"
-bash install_yarn_master_slave.sh
-
+bash install_yarn_master_slave.sh $MASTER_PUBLIC_IP
 
 # Move Config Files and install_yarn_master_slave.sh
 # Install Cluster on all Worker Nodes
@@ -62,7 +66,7 @@ for(( i=1;i<${#host_array[@]};i++)) ; do
     rsync -a --rsync-path="sudo rsync" $current_directory/configs/ ${host_array[i]}:$current_directory/configs/
     scp $current_directory/install_yarn_master_slave.sh ${host_array[i]}:$current_directory/
     echo "Installing on "${host_array[i]}
-    ssh root@${host_array[i]} -n "cd ${current_directory} && sudo bash install_yarn_master_slave.sh"
+    ssh root@${host_array[i]} -n "cd ${current_directory} && sudo bash install_yarn_master_slave.sh ${MASTER_PUBLIC_IP}"
     echo "Finished configuration on "${host_array[i]}
     echo ""
 done

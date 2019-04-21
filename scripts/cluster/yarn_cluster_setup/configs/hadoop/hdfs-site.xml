@@ -7,11 +7,15 @@
    </property>
     <property>
         <name>dfs.namenode.http-address</name>
-        <value>master:50070</value>
+        <value>master-variable-ip:50070</value>
     </property>
     <property>
         <name>dfs.namenode.secondary.http-address</name>
-        <value>master:50090</value>
+        <value>master-public-ip:50090</value>
+    </property>
+    <property>
+        <name>dfs.namenode.datanode.registration.ip-hostname-check</name>
+        <value>false</value>
     </property>
     <property>
         <name>dfs.replication</name>
@@ -29,8 +33,4 @@
         <name>dfs.webhdfs.enabled</name>
         <value>true</value>
     </property>
-    <!-- <property>
-        <name>dfs.namenode.acls.enabled</name>
-        <value>true</value>
-    </property> -->
 </configuration>

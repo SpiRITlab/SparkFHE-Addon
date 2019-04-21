@@ -1,11 +1,15 @@
 #!/bin/bash
 
-MASTER_HOSTNAME=master
-CLIENT_HOSTNAME=client
+# Master, Client Name depends on cluster config
+# If cluster config changes, the variable values should change
+client_name=client
+master_name=master
+MASTER_HOSTNAME=`ssh root@$master_name "hostname -i"`
+current_hostname=`hostname`
 
-if [[ `hostname` == *${CLIENT_HOSTNAME}* ]]; then
+if [[ $current_hostname == *"client"* ]]; then
 	echo "Commands running from correct node"
-	ssh $MASTER_HOSTNAME '
+	ssh root@$MASTER_HOSTNAME '
 		source /etc/profile
 
 		echo "SPARK TEST"
