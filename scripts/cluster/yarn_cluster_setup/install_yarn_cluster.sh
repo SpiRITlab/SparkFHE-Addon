@@ -70,3 +70,24 @@ for(( i=1;i<${#host_array[@]};i++)) ; do
     echo "Finished configuration on "${host_array[i]}
     echo ""
 done
+
+
+echo "Starting Cluster to Ping all Nodes"
+
+source /etc/profile
+
+$HADOOP_HOME/sbin/start-dfs.sh
+$HADOOP_HOME/sbin/start-yarn.sh
+$HADOOP_HOME/sbin/mr-jobhistory-daemon.sh start historyserver
+$HADOOP_HOME/bin/hdfs dfsadmin -safemode leave
+$SPARK_HOME/sbin/start-history-server.sh
+$SPARK_HOME/sbin/start-all.sh
+jps
+$HADOOP_HOME/bin/hdfs dfsadmin -report
+
+echo "Stopping Cluster"
+$SPARK_HOME/sbin/stop-history-server.sh
+$SPARK_HOME/sbin/stop-all.sh
+$HADOOP_HOME/sbin/mr-jobhistory-daemon.sh stop historyserver
+$HADOOP_HOME/sbin/stop-dfs.sh
+$HADOOP_HOME/sbin/stop-yarn.sh
