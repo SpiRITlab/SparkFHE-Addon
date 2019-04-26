@@ -46,11 +46,14 @@ function authorize_access_between_nodes() {
          rm -rf $HOME/.ssh/id_rsa && \
          geni-get key > $HOME/.ssh/id_rsa && \
          chmod 600 $HOME/.ssh/id_rsa && \
-         ssh-keygen -y -f $HOME/.ssh/id_rsa > $HOME/.ssh/id_rsa.pub'
+         ssh-keygen -y -f $HOME/.ssh/id_rsa > $HOME/.ssh/id_rsa.pub && \
+         sudo mkdir -p /root/.ssh && \
+         sudo cp $HOME/.ssh/id_rsa* /root/.ssh/'
 
         # If you want to permit login authenticated by the auto-generated key,
         # then append the public half to the authorized_keys file:
-        ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $MyUserName@${cluster_nodes[idx]} 'grep -q -f $HOME/.ssh/id_rsa.pub $HOME/.ssh/authorized_keys || cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys'
+        ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $MyUserName@${cluster_nodes[idx]} 'grep -q -f $HOME/.ssh/id_rsa.pub $HOME/.ssh/authorized_keys || cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys && \
+        sudo cp $HOME/.ssh/authorized_keys /root/.ssh/'
     done
 }
 
