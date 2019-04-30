@@ -6,32 +6,63 @@ NTL_Version=ntl-11.3.0
 SWIG_Version=swig-3.0.12
 BOOST_Version=boost_1_68_0
 ARMADILLO_Version=armadillo-9.200.6
+HADOOP_Version=hadoop-2.9.2
 
-# exit when any command fails
-set -e
-# keep track of the last executed command
-trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
-# echo an error message before exiting
-trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
+
+
+### Optional packages
+Enable_AWSS3=false      # AWSS3
+Enable_HDFS=false       # HDFS
+######################
 
 # init
 Marker=SparkFHE_succeded
-PROJECT_ROOT_PATH=`pwd`/"../../../"
+PROJECT_ROOT_PATH=`pwd`
 DEPS_PATH="$PROJECT_ROOT_PATH/deps"
 libSparkFHE_root=$PROJECT_ROOT_PATH/libSparkFHE
 libSparkFHE_include=$PROJECT_ROOT_PATH/libSparkFHE/include
 libSparkFHE_lib=$PROJECT_ROOT_PATH/libSparkFHE/lib
 libSparkFHE_share=$PROJECT_ROOT_PATH/libSparkFHE/share
-mkdir -p $libSparkFHE_include $libSparkFHE_lib $libSparkFHE_share  $DEPS_PATH
+mkdir -p $libSparkFHE_include $libSparkFHE_lib $libSparkFHE_share bin/keys bin/records $DEPS_PATH
 
 #Boost Libraries (Comma Separated library names)
 boost_libraries=iostreams
 
 cd $DEPS_PATH
 
+set_trap(){
+# exit when any command fails
+set -e
+# keep track of the last executed command
+trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+# echo an error message before exiting
+trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
+}
+
+parse_args(){
+    IFS=',' read -ra OPT_PKGS <<< "$1"
+    for i in "${OPT_PKGS[@]}"; do
+        if [ "$i" == "AWSS3" ] ; then
+            Enable_AWSS3=true
+        elif [ "$i" == "HDFS" ] ; then
+            Enable_HDFS=true
+        elif [ "$i" == "help" ] ; then
+            usage
+            trap EXIT
+            exit 0
+        fi
+    done
+}
+
+usage(){
+    echo "$0 [AWSS3,HDFS]"
+}
+
+set_trap
+parse_args $1
 
 # =============================================================================
-# functions to minimize code redundancy 
+# functions to minimize code redundancy
 # =============================================================================
 
 install_boost(){
@@ -44,7 +75,7 @@ install_boost(){
     ./bootstrap.sh --with-libraries=$boost_libraries --prefix=$libSparkFHE_root
     ./b2 install
     echo "Installing $BOOST... (DONE)"
-    touch $Marker # add the marker 
+    touch $Marker # add the marker
     cd ..
 }
 
@@ -55,7 +86,7 @@ install_googletest(){
     cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make CXX=g++-8 LD=g++-8; make install
     echo "Installing $GoogleTEST... (DONE)"
-    touch $Marker # add the marker 
+    touch $Marker # add the marker
     cd ..
 }
 
@@ -69,7 +100,7 @@ install_swig(){
     ./configure --prefix=$libSparkFHE_root --exec-prefix=$libSparkFHE_root
     make; make install
     echo "Installing $SWIG... (DONE)"
-    touch $Marker # add the marker 
+    touch $Marker # add the marker
     cd ..
 }
 
@@ -80,7 +111,7 @@ download_and_install_rapidjson(){
     cmake -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make install
     echo "Installing $RapidJSON... (DONE)"
-    touch $Marker # add the marker 
+    touch $Marker # add the marker
     cd ..
 }
 
@@ -94,7 +125,7 @@ install_gmp(){
     ./configure --prefix=$libSparkFHE_root --exec-prefix=$libSparkFHE_root
     make; make install
     echo "Installing $GMP... (DONE)"
-    touch $Marker # add the marker 
+    touch $Marker # add the marker
     cd ..
 }
 
@@ -111,7 +142,7 @@ download_and_install_gf2x(){
     make CXX=g++-8 check
     make CXX=g++-8 install
     echo "Installing $GF2X... (DONE)"
-    touch $Marker # add the marker 
+    touch $Marker # add the marker
     cd ..
 }
 
@@ -127,7 +158,7 @@ download_and_install_ntl(){
     make install
     echo "Installing $NTL... (DONE)"
     cd ..
-    touch $Marker # add the marker 
+    touch $Marker # add the marker
     cd ..
 }
 
@@ -141,7 +172,7 @@ download_and_install_armadillo(){
     cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make; make install
     echo "Installing $ARMADILLO... (DONE)"
-    touch $Marker # add the marker 
+    touch $Marker # add the marker
     cd ..
 }
 
@@ -156,7 +187,7 @@ download_and_install_helib(){
     cp src/*.h $libSparkFHE_include/HElib/
     cp lib/libfhe.a $libSparkFHE_lib/libfhe.a
     echo "Installing $HElib... (DONE)"
-    touch $Marker # add the marker 
+    touch $Marker # add the marker
     cd ..
 }
 
@@ -171,32 +202,89 @@ download_and_install_seal(){
     make install
     echo "Installing $SEAL... (DONE)"
     cd ..
-    touch $Marker # add the marker 
+    touch $Marker # add the marker
     cd ..
 }
 
+download_and_install_awssdk(){
+    echo "Installing $AWSSDK..."
+    git clone https://github.com/aws/aws-sdk-cpp.git $AWSSDK
+    cd $AWSSDK;
+    cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_ONLY="s3" -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
+    make install
+    cp AWSSDK/* cmake/
+    echo "Installing $AWSSDK... (DONE)"
+    touch $Marker # add the marker
+    cd ..
+}
+
+
+download_and_install_hdfs(){
+    echo "Installing $HDFS SDK..."
+    wget http://mirror.cc.columbia.edu/pub/software/apache/hadoop/common/$HADOOP_Version/"$HADOOP_Version"-src.tar.gz
+    tar zxvf "$HADOOP_Version"-src.tar.gz
+    mv "$HADOOP_Version"-src $HDFS
+    rm -rf "$HADOOP_Version"-src.tar.gz
+    cd $HDFS/hadoop-hdfs-project
+
+    # installing protobuf-2.5.0 as it is required by hadoop
+    mkdir -p protobufCompiled
+    CURRENT_PATH=$(pwd)
+    wget https://github.com/protocolbuffers/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz
+    tar zxvf protobuf-2.5.0.tar.gz
+    rm -rf protobuf-2.5.0.tar.gz
+    cd protobuf-2.5.0
+    ./configure --prefix=${CURRENT_PATH}/protobufCompiled
+    make
+    make check
+    make install
+    cd ..
+
+    OLD_PATH=$PATH
+
+    # compile HDFS source code
+    export PATH=${CURRENT_PATH}/protobufCompiled/bin:$PATH && mvn package -Pdist,native -DskipTests
+    export PATH=$OLD_PATH:$PATH
+
+    set +e
+    ## declare an array variable
+    declare -a hadoop_hdfs_pkgs=( hadoop-hdfs hadoop-hdfs-client hadoop-hdfs-httpfs hadoop-hdfs-native-client hadoop-hdfs-nfs hadoop-hdfs-rbf )
+    for hdfs_pkg in "${hadoop_hdfs_pkgs[@]}"; do
+        echo "Copying compiled files from ${hdfs_pkg}..."
+        cp -Rn ${hdfs_pkg}/target/${hdfs_pkg}-${HADOOP_Version:7}/* $libSparkFHE_root/
+    done
+    set_trap
+
+    echo "Installing $HDFS SDK... (DONE)"
+    cd ../
+    touch $Marker # add the marker
+    cd ..
+}
+
+
 # =============================================================================
-# installing dependencies 
+# installing dependencies
 # =============================================================================
 
 
-# Boost is a set of libraries for the C++ programming language that provide 
-# support for tasks and structures such as linear algebra, pseudorandom number 
-# generation, multithreading, image processing, regular expressions, and unit 
+# Boost is a set of libraries for the C++ programming language that provide
+# support for tasks and structures such as linear algebra, pseudorandom number
+# generation, multithreading, image processing, regular expressions, and unit
 # testing.
 BOOST="BOOST"
 if [ -d $BOOST ]; then
     if [ ! -f $BOOST/$Marker ]; then
-        rm -rf $BOOST # remove the folder 
+        rm -rf $BOOST # remove the folder
         install_boost
     else
-        echo "BOOST library already installed"
-    fi  
+        echo "$BOOST library already installed"
+    fi
 else
     install_boost
 fi
 
-# Google Test is a unit testing library for the C++ programming language, 
+# Google Test is a unit testing library for the C++ programming language,
 # based on the xUnit architecture.
 GoogleTEST="GoogleTEST"
 if [ -d $GoogleTEST ]; then
@@ -204,16 +292,16 @@ if [ -d $GoogleTEST ]; then
         rm -rf $GoogleTEST # remove the folder
         install_googletest
     else
-        echo "GoogleTEST already installed"
+        echo "$GoogleTEST already installed"
     fi
 else
     install_googletest
 fi
 
 # The Simplified Wrapper and Interface Generator is an open-source software
-# tool used to connect computer programs or libraries written in C or C++ 
-# with scripting languages such as Lua, Perl, PHP, Python, R, Ruby, Tcl, and 
-# other languages like C#, Java, JavaScript, Go, Modula-3, OCaml, Octave, 
+# tool used to connect computer programs or libraries written in C or C++
+# with scripting languages such as Lua, Perl, PHP, Python, R, Ruby, Tcl, and
+# other languages like C#, Java, JavaScript, Go, Modula-3, OCaml, Octave,
 # Scilab and Scheme.
 SWIG="SWIG"
 if [ -d $SWIG ]; then
@@ -221,27 +309,27 @@ if [ -d $SWIG ]; then
         rm -rf $SWIG # remove the folder
         install_swig
     else
-        echo "SWIG already installed"
+        echo "$SWIG already installed"
     fi
 else
     install_swig
 fi
 
-# RapidJSON is a JSON parser and generator for C++. It was inspired by RapidXml. 
+# RapidJSON is a JSON parser and generator for C++. It was inspired by RapidXml.
 RapidJSON="RapidJSON"
 if [ -d $RapidJSON ]; then
     if [ ! -f $RapidJSON/$Marker ]; then
-        rm -rf $RapidJSON # remove the folder 
+        rm -rf $RapidJSON # remove the folder
         download_and_install_rapidjson
     else
-        echo "RapidJSON already installed"
+        echo "$RapidJSON already installed"
     fi
 else
     download_and_install_rapidjson
 fi
 
 
-# The GMP package contains math libraries. These have useful functions 
+# The GMP package contains math libraries. These have useful functions
 # for arbitrary precision arithmetic.
 GMP="GMP"
 if [ -d $GMP ]; then
@@ -249,14 +337,14 @@ if [ -d $GMP ]; then
         rm -rf $GMP # remove the folder
         install_gmp
     else
-        echo "GMP already installed"
+        echo "$GMP already installed"
     fi
 else
-    install_gmp 
+    install_gmp
 fi
 
 # gf2x is a C/C++ software package containing routines for fast arithmetic
-# in GF(2)[x] (multiplication, squaring, GCD) and searching for 
+# in GF(2)[x] (multiplication, squaring, GCD) and searching for
 # irreducible/primitive trinomials.
 GF2X="GF2X"
 if [ -d $GF2X ]; then
@@ -264,15 +352,15 @@ if [ -d $GF2X ]; then
         rm -rf $GF2X # remove the folder
         download_and_install_gf2x
     else
-        echo "GF2X already installed"
+        echo "$GF2X already installed"
     fi
 else
     download_and_install_gf2x
 fi
 
-# NTL is a C++ library for doing number theory. NTL supports arbitrary 
-# length integer and arbitrary precision floating point arithmetic, finite 
-# fields, vectors, matrices, polynomials, lattice basis reduction and basic 
+# NTL is a C++ library for doing number theory. NTL supports arbitrary
+# length integer and arbitrary precision floating point arithmetic, finite
+# fields, vectors, matrices, polynomials, lattice basis reduction and basic
 # linear algebra.
 NTL="NTL"
 if [ -d $NTL ]; then
@@ -280,20 +368,20 @@ if [ -d $NTL ]; then
         rm -rf $NTL # remove the folder
         download_and_install_ntl
     else
-        echo "NTL already installed"
+        echo "$NTL already installed"
     fi
 else
     download_and_install_ntl
 fi
 
-# Armadillo is a linear algebra software library for the C++. 
+# Armadillo is a linear algebra software library for the C++.
 ARMADILLO="ARMADILLO"
 if [ -d $ARMADILLO ]; then
     if [ ! -f $ARMADILLO/$Marker ]; then
         rm -rf $ARMADILLO # remove the folder
         download_and_install_armadillo
     else
-        echo "ARMADILLO already installed"
+        echo "$ARMADILLO already installed"
     fi
 else
     download_and_install_armadillo
@@ -306,44 +394,57 @@ if [ -d $HElib ]; then
         rm -rf $HElib # remove the folder
         download_and_install_helib
     else
-        echo "HElib already installed"
+        echo "$HElib already installed"
     fi
 else
     download_and_install_helib
 fi
 
-# download and install SEAL; due to copyright reason we can automatically fetch the package.
-# download from here, https://www.microsoft.com/en-us/research/project/simple-encrypted-arithmetic-library/
-# place the folder into deps and rename to "SEAL"
+
+# https://www.microsoft.com/en-us/research/project/simple-encrypted-arithmetic-library/
 SEAL="SEAL"
 if [ -d $SEAL ]; then
     if [ ! -f $SEAL/$Marker ]; then
         rm -rf $SEAL # remove the folder
-        download_and_install_seal 
+        download_and_install_seal
     else
-        echo "SEAL already installed"
+        echo "$SEAL already installed"
     fi
 else
    download_and_install_seal
 fi
 
 
-# Uncomment the follow code to install AWS SDK
-# download and compile AWS SDK for c++
-#https://docs.aws.amazon.com/sdk-for-cpp/v1/developer-guide/credentials.html
-#AwsSDK="AwsSDK"
-#if [ ! -d $AwsSDK ]; then
-#    echo "Installing $AwsSDK..."
-#    git clone https://github.com/aws/aws-sdk-cpp.git $AwsSDK
-#    cd $AwsSDK;
-#    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_ONLY="s3" .
-#    make CC=g++-8 LD=g++-8 CFLAGS+=-fPIC
-#    sudo make install
-#    cp AWSSDK/* cmake/
-#    echo "Installing $AwsSDK... (DONE)"
-#    cd ..
-#fi
+# https://docs.aws.amazon.com/sdk-for-cpp/v1/developer-guide/credentials.html
+if [ "$Enable_AWSS3" = true ] ; then
+    AWSSDK="AWSSDK"
+    if [ -d $AWSSDK ]; then
+        if [ ! -f $AWSSDK/$Marker ]; then
+            rm -rf $AWSSDK # remove the folder
+            download_and_install_awssdk
+        else
+            echo "$AWSSDK already installed"
+        fi
+    else
+        download_and_install_awssdk
+    fi
+fi
+
+
+if [ "$Enable_HDFS" = true ] ; then
+    HDFS="HDFS"
+    if [ -d $HDFS ]; then
+        if [ ! -f $HDFS/$Marker ]; then
+            rm -rf $HDFS # remove the folder
+            download_and_install_hdfs
+        else
+            echo "$HDFS already installed"
+        fi
+    else
+        download_and_install_hdfs
+    fi
+fi
+
 
 
 trap EXIT
-
