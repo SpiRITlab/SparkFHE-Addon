@@ -245,7 +245,6 @@ download_and_install_hdfs(){
 
     # compile HDFS source code
     export PATH=${CURRENT_PATH}/protobufCompiled/bin:$PATH && mvn package -Pdist,native -DskipTests
-    export PATH=$OLD_PATH:$PATH
 
     set +e
     ## declare an array variable
@@ -255,6 +254,20 @@ download_and_install_hdfs(){
         cp -Rn ${hdfs_pkg}/target/${hdfs_pkg}-${HADOOP_Version:7}/* $libSparkFHE_root/
     done
     set_trap
+
+    # compile hadoop common source code
+    cd ../hadoop-common-project
+    export PATH=${CURRENT_PATH}/protobufCompiled/bin:$PATH && mvn package -Pdist,native -DskipTests
+    set +e
+    ## declare an array variable
+    declare -a hadoop_common_pkgs=( hadoop-common )
+    for common_pkg in "${hadoop_common_pkgs[@]}"; do
+        echo "Copying compiled files from ${common_pkg}..."
+        cp -Rn ${common_pkg}/target/${common_pkg}-${HADOOP_Version:7}/* $libSparkFHE_root/
+    done
+    set_trap
+
+    export PATH=$OLD_PATH
 
     echo "Installing $HDFS SDK... (DONE)"
     cd ../
