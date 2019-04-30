@@ -17,13 +17,13 @@ Enable_HDFS=false       # HDFS
 
 # init
 Marker=SparkFHE_succeded
-PROJECT_ROOT_PATH=`pwd`
+PROJECT_ROOT_PATH=`pwd`/"../../../"
 DEPS_PATH="$PROJECT_ROOT_PATH/deps"
 libSparkFHE_root=$PROJECT_ROOT_PATH/libSparkFHE
 libSparkFHE_include=$PROJECT_ROOT_PATH/libSparkFHE/include
 libSparkFHE_lib=$PROJECT_ROOT_PATH/libSparkFHE/lib
 libSparkFHE_share=$PROJECT_ROOT_PATH/libSparkFHE/share
-mkdir -p $libSparkFHE_include $libSparkFHE_lib $libSparkFHE_share bin/keys bin/records $DEPS_PATH
+mkdir -p $libSparkFHE_include $libSparkFHE_lib $libSparkFHE_share $DEPS_PATH
 
 #Boost Libraries (Comma Separated library names)
 boost_libraries=iostreams
@@ -31,12 +31,12 @@ boost_libraries=iostreams
 cd $DEPS_PATH
 
 set_trap(){
-# exit when any command fails
-set -e
-# keep track of the last executed command
-trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
-# echo an error message before exiting
-trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
+    # exit when any command fails
+    set -e
+    # keep track of the last executed command
+    trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+    # echo an error message before exiting
+    trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
 }
 
 parse_args(){
