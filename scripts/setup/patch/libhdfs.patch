@@ -1,0 +1,17 @@
+--- HDFS/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfs/os/posix/thread_local_storage.c	2019-05-15 00:23:26.000000000 -0400
++++ HDFS/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfs/os/posix/thread_local_storage.c.mod	2019-05-15 10:04:59.000000000 -0400
+@@ -46,7 +46,13 @@ static void hdfsThreadDestructor(void *v
+       ret);
+     (*env)->ExceptionDescribe(env);
+   } else {
+-    (*vm)->DetachCurrentThread(vm);
++      // Buggy JVM support, DetachCurrentThread throws exceptions sometimes.
++      // Workaround is to try to AttachCurrentThread as it is a noop if the
++      // Thread is already attached.
++      ret = (*vm)->AttachCurrentThread(vm, (void*)&env, 0);
++      if (ret == JNI_OK) {
++        (*vm)->DetachCurrentThread(vm);
++      }
+   }
+ }
+ 
