@@ -40,3 +40,15 @@ On Worker nodes run:
 ```
 sudo systemctl restart mesos-slave
 ```
+
+
+## If HDFS is installed, you can start and stop it by these commands.
+To start HDFS: 
+```
+sudo /usr/local/hadoop/sbin/start-dfs.sh
+```
+
+To stop HDFS: 
+```
+sudo /usr/local/hadoop/sbin/stop-dfs.sh
+```
