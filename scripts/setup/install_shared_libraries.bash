@@ -227,6 +227,8 @@ download_and_install_hdfs(){
     mv "$HADOOP_Version"-src $HDFS
     rm -rf "$HADOOP_Version"-src.tar.gz
     cd $HDFS/hadoop-hdfs-project
+    wget https://raw.githubusercontent.com/SpiRITlab/SparkFHE-Addon/master/scripts/setup/patch/libhdfs.patch
+    patch -p2 < libhdfs.patch
 
     # installing protobuf-2.5.0 as it is required by hadoop
     mkdir -p protobufCompiled
