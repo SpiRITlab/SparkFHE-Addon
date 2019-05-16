@@ -60,6 +60,9 @@ Check whether the datanode is online:
 or 
 http://[MasterNodeIP]:50070
 
+Check spark jobs submitted to Mesos at
+http://[MasterNodeIP]:5050
+
 To stop HDFS: 
 ```
 sudo /usr/local/hadoop/sbin/stop-dfs.sh
