@@ -48,6 +48,18 @@ To start HDFS:
 sudo /usr/local/hadoop/sbin/start-dfs.sh
 ```
 
+To start datanode:
+```
+sudo /usr/local/hadoop/bin/hadoop datanode
+```
+
+Check whether the datanode is online:
+```
+/usr/local/hadoop/bin/hdfs dfsadmin -report
+```
+or 
+http://[MasterNodeIP]:50070
+
 To stop HDFS: 
 ```
 sudo /usr/local/hadoop/sbin/stop-dfs.sh
