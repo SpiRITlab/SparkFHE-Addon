@@ -9,18 +9,19 @@
 ProjectRoot=../../..
 cd $ProjectRoot
 
+SparkFHE_distribution=`pwd`
 SparkFHE_Addon_name="SparkFHE-Addon"
 
 master=local
 deploy_mode=client
 
-ivysettings_file=$SparkFHE_Addon_name/resources/config/ivysettings.xml
-log4j_file=$SparkFHE_Addon_name/resources/config/log4j.properties
-jar_sparkfhe_examples=examples/jars/$(ls examples/jars | grep sparkfhe-examples-)
-jar_sparkfhe_api=jars/$(ls jars | grep sparkfhe-api-)
-jar_sparkfhe_plugin=jars/$(ls jars | grep spark-fhe)
-libSparkFHE_path=libSparkFHE/lib:/usr/local/lib
-java_class_path=.:jars
+ivysettings_file=$SparkFHE_distribution/$SparkFHE_Addon_name/resources/config/ivysettings.xml
+log4j_file=$SparkFHE_distribution/$SparkFHE_Addon_name/resources/config/log4j.properties
+jar_sparkfhe_examples=$SparkFHE_distribution/examples/jars/$(ls examples/jars | grep sparkfhe-examples-)
+jar_sparkfhe_api=$SparkFHE_distribution/jars/$(ls jars | grep sparkfhe-api-)
+jar_sparkfhe_plugin=$SparkFHE_distribution/jars/$(ls jars | grep spark-fhe)
+libSparkFHE_path=$SparkFHE_distribution/libSparkFHE/lib
+java_class_path=.:$SparkFHE_distribution/jars
 
 
 
@@ -34,7 +35,7 @@ function run_spark_submit_command() {
 		--name $spark_job_name \
 		--master $master \
 		--deploy-mode $deploy_mode \
-	    --driver-class-path $java_class_path \
+		--driver-class-path $java_class_path \
 		--class $main_class_to_run \
 		--jars $jar_sparkfhe_api,$jar_sparkfhe_plugin \
 		--conf spark.jars.ivySettings="$ivysettings_file" \
@@ -56,21 +57,55 @@ fi
 # increase the size of the vm
 export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m"
 
+
+
+echo "========================================================="
+echo "Starting spiritlab.sparkfhe.example.basic.BasicExample..."
+echo "========================================================="
 # run basic operations without SparkFHE stuffs
 run_spark_submit_command  sparkfhe_basic_examples  spiritlab.sparkfhe.example.basic.BasicExample
 
+
+
+echo "=========================================================="
+echo "Starting spiritlab.sparkfhe.example.basic.KeyGenExample..."
+echo "=========================================================="
+# create a folder for the generated keys
+mkdir -p $SparkFHE_distribution/gen/keys
 # generate example key pairs
-run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample local
+run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample  local
 
+
+
+echo "=========================================================="
+echo "Starting spiritlab.sparkfhe.example.basic.EncDecExample..."
+echo "=========================================================="
+# create a folder for the generated ciphertexts
+mkdir -p $SparkFHE_distribution/gen/records
 # generate example ciphertexts
-run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample local "gen/keys/my_public_key.txt" "gen/keys/my_secret_key.txt"
+run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample  local \
+	"$SparkFHE_distribution/gen/keys/my_public_key.txt" \
+	"$SparkFHE_distribution/gen/keys/my_secret_key.txt"
 
+
+
+echo "============================================================"
+echo "Starting spiritlab.sparkfhe.example.basic.BasicOPsExample..."
+echo "============================================================"
 # run basic FHE arithmetic operation over encrypted data
-run_spark_submit_command  sparkfhe_basic_examples  spiritlab.sparkfhe.example.basic.BasicOPsExample  local  "gen/keys/my_public_key.txt" "gen/keys/my_secret_key.txt"   "gen/records/$(ls gen/records | grep ptxt_long_0)" "gen/records/$(ls gen/records | grep ptxt_long_1)"
+run_spark_submit_command  sparkfhe_basic_examples  spiritlab.sparkfhe.example.basic.BasicOPsExample  local \
+	"$SparkFHE_distribution/gen/keys/my_public_key.txt" \
+	"$SparkFHE_distribution/gen/keys/my_secret_key.txt" 
 
+
+
+echo "=============================================================="
+echo "Starting spiritlab.sparkfhe.example.basic.DotProductExample..."
+echo "=============================================================="
 # run FHE dot product over two encrypted vectors
-run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample  local  "gen/keys/my_public_key.txt" "gen/keys/my_secret_key.txt"   "gen/records/$(ls gen/records | grep vec_a)" "gen/records/$(ls gen/records | grep vec_b)"
-
+run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample  local \
+	"$SparkFHE_distribution/gen/keys/my_public_key.txt" \
+	"$SparkFHE_distribution/gen/keys/my_secret_key.txt"
 
 
 
