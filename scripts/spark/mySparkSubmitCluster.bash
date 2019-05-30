@@ -88,9 +88,15 @@ echo "=========================================================="
 # generate example key pairs
 run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample 1 $HDFS_HOST
 
-# wait for new key to be generated; because spark process jobs in parallel
-echo "waiting 20s for keys to be generated..." 
-sleep 20
+
+while true; do
+    read -p "Check http://$1:5050 --- Has KeyGenExample finished?" yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) echo "Can't proceed, please wait...";; sleep 5;;
+        * ) echo "Please answer yes (y) or no (n).";;
+    esac
+done
 
 
 
@@ -102,10 +108,14 @@ run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.exa
 	"$HDFS_URL/gen/keys/my_public_key.txt" \
 	"$HDFS_URL/gen/keys/my_secret_key.txt"
 
-# wait for new ciphertexts to be generated; because spark process jobs in parallel
-echo "waiting 20s for ciphertexts to be generated..."
-sleep 20
-
+while true; do
+    read -p "Check http://$1:5050 --- Has EncDecExample finished?" yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) echo "Can't proceed, please wait...";; sleep 5;;
+        * ) echo "Please answer yes (y) or no (n).";;
+    esac
+done
 
 
 echo "============================================================"
