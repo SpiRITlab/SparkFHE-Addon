@@ -93,7 +93,7 @@ while true; do
     read -p "Check http://$1:5050 --- Has KeyGenExample finished?" yn
     case $yn in
         [Yy]* ) break;;
-        [Nn]* ) echo "Can't proceed, please wait...";; sleep 5;;
+        [Nn]* ) echo "Can't proceed, please wait...";;
         * ) echo "Please answer yes (y) or no (n).";;
     esac
 done
@@ -112,7 +112,7 @@ while true; do
     read -p "Check http://$1:5050 --- Has EncDecExample finished?" yn
     case $yn in
         [Yy]* ) break;;
-        [Nn]* ) echo "Can't proceed, please wait...";; sleep 5;;
+        [Nn]* ) echo "Can't proceed, please wait...";;
         * ) echo "Please answer yes (y) or no (n).";;
     esac
 done
