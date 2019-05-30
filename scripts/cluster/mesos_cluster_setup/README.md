@@ -71,9 +71,10 @@ Hadoop HDFS web UI
 http://[MasterNodeIP]:50070
 
 Spark job history servers
+http://[worker1NodeIP]18080
+http://[worker2NodeIP]18080
+
 Note, you will need to start the server on each worker node first.
 ```
 bash /spark-3.0.0-SNAPSHOT-bin-SparkFHE/sbin/start-history-server.sh
 ```
-http://[worker1NodeIP]18080
-http://[worker2NodeIP]18080
