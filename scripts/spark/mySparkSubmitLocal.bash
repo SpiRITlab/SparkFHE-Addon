@@ -61,7 +61,6 @@ fi
 export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m"
 
 
-
 echo "========================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.BasicExample..."
 echo "========================================================="
@@ -73,22 +72,58 @@ run_spark_submit_command  sparkfhe_basic_examples  spiritlab.sparkfhe.example.ba
 echo "=========================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.KeyGenExample..."
 echo "=========================================================="
-# create a folder for the generated keys
-mkdir -p $SparkFHE_distribution/gen/keys
 # generate example key pairs
-run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample  local
+read -p "Do you want to run KeyGenExample? (y/n)" yn
+case $yn in
+	[Yy]* ) 
+		mkdir -p $SparkFHE_distribution/gen/keys
+		run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample 1 $HDFS_HOST
+		while true; do
+    		read -p "Check http://$1:5050 --- Has KeyGenExample finished? (y/n/q)" ynq
+    		case $ynq in
+        		[Yy]* ) break;;
+        		[Nn]* ) echo "Can't proceed, please wait...";;
+        		[Qq]* ) exit;;
+        		* ) echo "Please answer yes (y), no (n), or quit (q).";;
+    		esac
+		done
+	;;
+    [Nn]* ) 
+		echo "Skip to the next job.";;
+    * ) 
+		echo "Please answer yes (y) or no (n).";;
+esac
+
+
 
 
 
 echo "=========================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.EncDecExample..."
 echo "=========================================================="
-# create a folder for the generated ciphertexts
-mkdir -p $SparkFHE_distribution/gen/records
 # generate example ciphertexts
-run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample  local \
-	"$SparkFHE_distribution/gen/keys/my_public_key.txt" \
-	"$SparkFHE_distribution/gen/keys/my_secret_key.txt"
+read -p "Do you want to run EncDecExample? (y/n)" yn
+case $yn in
+	[Yy]* ) 
+		mkdir -p $SparkFHE_distribution/gen/records
+		run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample 1 $HDFS_HOST \
+				"$HDFS_URL/gen/keys/my_public_key.txt" \
+				"$HDFS_URL/gen/keys/my_secret_key.txt"
+		while true; do
+    		read -p "Check http://$1:5050 --- Has KeyGenExample finished? (y/n/q)" ynq
+    		case $ynq in
+        		[Yy]* ) break;;
+        		[Nn]* ) echo "Can't proceed, please wait...";;
+				[Qq]* ) exit;;
+        		* ) echo "Please answer yes (y), no (n), or quit (q).";;
+    		esac
+		done
+	;;
+    [Nn]* ) 
+		echo "Skip to the next job.";;
+    * ) 
+		echo "Please answer yes (y) or no (n).";;
+esac
 
 
 
@@ -96,9 +131,18 @@ echo "============================================================"
 echo "Starting spiritlab.sparkfhe.example.basic.BasicOPsExample..."
 echo "============================================================"
 # run basic FHE arithmetic operation over encrypted data
-run_spark_submit_command  sparkfhe_basic_examples  spiritlab.sparkfhe.example.basic.BasicOPsExample  local \
-	"$SparkFHE_distribution/gen/keys/my_public_key.txt" \
-	"$SparkFHE_distribution/gen/keys/my_secret_key.txt" 
+read -p "Do you want to run BasicOPsExample? (y/n)" yn
+case $yn in
+	[Yy]* ) 
+		run_spark_submit_command  sparkfhe_basic_OPs_examples  spiritlab.sparkfhe.example.basic.BasicOPsExample 2 $HDFS_HOST \
+			"$HDFS_URL/gen/keys/my_public_key.txt" \
+			"$HDFS_URL/gen/keys/my_secret_key.txt"
+	;;
+    [Nn]* ) 
+		echo "Skip to the next job.";;
+    * ) 
+		echo "Please answer yes (y) or no (n).";;
+esac
 
 
 
@@ -106,9 +150,9 @@ echo "=============================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.DotProductExample..."
 echo "=============================================================="
 # run FHE dot product over two encrypted vectors
-run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample  local \
-	"$SparkFHE_distribution/gen/keys/my_public_key.txt" \
-	"$SparkFHE_distribution/gen/keys/my_secret_key.txt"
+run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample 2 $HDFS_HOST \
+	"$HDFS_URL/gen/keys/my_public_key.txt" \
+	"$HDFS_URL/gen/keys/my_secret_key.txt"
 
 
 
