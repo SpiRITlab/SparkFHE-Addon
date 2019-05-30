@@ -89,7 +89,7 @@ echo "=========================================================="
 read -p "Do you want to run KeyGenExample? (y/n)" yn
 case $yn in
 	[Yy]* ) run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample 1 $HDFS_HOST;;
-    [Nn]* ) break;;
+    [Nn]* ) echo "Skip to the next job.";;
     * ) echo "Please answer yes (y) or no (n).";;
 esac
 
@@ -114,7 +114,7 @@ case $yn in
 	[Yy]* ) run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample 1 $HDFS_HOST \
 				"$HDFS_URL/gen/keys/my_public_key.txt" \
 				"$HDFS_URL/gen/keys/my_secret_key.txt";;
-    [Nn]* ) break;;
+    [Nn]* ) echo "Skip to the next job.";;
     * ) echo "Please answer yes (y) or no (n).";;
 esac
 
