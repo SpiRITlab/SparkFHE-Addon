@@ -88,20 +88,25 @@ echo "=========================================================="
 # generate example key pairs
 read -p "Do you want to run KeyGenExample? (y/n)" yn
 case $yn in
-	[Yy]* ) run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample 1 $HDFS_HOST;;
-    [Nn]* ) echo "Skip to the next job.";;
-    * ) echo "Please answer yes (y) or no (n).";;
+	[Yy]* ) 
+		run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample 1 $HDFS_HOST
+		while true; do
+    		read -p "Check http://$1:5050 --- Has KeyGenExample finished? (y/n/q)" ynq
+    		case $ynq in
+        		[Yy]* ) break;;
+        		[Nn]* ) echo "Can't proceed, please wait...";;
+        		[Qq]* ) exit;;
+        		* ) echo "Please answer yes (y), no (n), or quit (q).";;
+    		esac
+		done
+	;;
+    [Nn]* ) 
+		echo "Skip to the next job.";;
+    * ) 
+		echo "Please answer yes (y) or no (n).";;
 esac
 
-while true; do
-    read -p "Check http://$1:5050 --- Has KeyGenExample finished? (y/n/q)" ynq
-    case $ynq in
-        [Yy]* ) break;;
-        [Nn]* ) echo "Can't proceed, please wait...";;
-        [Qq]* ) exit;;
-        * ) echo "Please answer yes (y), no (n), or quit (q).";;
-    esac
-done
+
 
 
 
@@ -111,22 +116,26 @@ echo "=========================================================="
 # generate example ciphertexts
 read -p "Do you want to run EncDecExample? (y/n)" yn
 case $yn in
-	[Yy]* ) run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample 1 $HDFS_HOST \
+	[Yy]* ) 
+		run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample 1 $HDFS_HOST \
 				"$HDFS_URL/gen/keys/my_public_key.txt" \
-				"$HDFS_URL/gen/keys/my_secret_key.txt";;
-    [Nn]* ) echo "Skip to the next job.";;
-    * ) echo "Please answer yes (y) or no (n).";;
+				"$HDFS_URL/gen/keys/my_secret_key.txt"
+		while true; do
+    		read -p "Check http://$1:5050 --- Has KeyGenExample finished? (y/n/q)" ynq
+    		case $ynq in
+        		[Yy]* ) break;;
+        		[Nn]* ) echo "Can't proceed, please wait...";;
+				[Qq]* ) exit;;
+        		* ) echo "Please answer yes (y), no (n), or quit (q).";;
+    		esac
+		done
+	;;
+    [Nn]* ) 
+		echo "Skip to the next job.";;
+    * ) 
+		echo "Please answer yes (y) or no (n).";;
 esac
 
-while true; do
-    read -p "Check http://$1:5050 --- Has KeyGenExample finished? (y/n/q)" ynq
-    case $ynq in
-        [Yy]* ) break;;
-        [Nn]* ) echo "Can't proceed, please wait...";;
-		[Qq]* ) exit;;
-        * ) echo "Please answer yes (y), no (n), or quit (q).";;
-    esac
-done
 
 
 echo "============================================================"
