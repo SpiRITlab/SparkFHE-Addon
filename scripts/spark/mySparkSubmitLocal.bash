@@ -42,6 +42,7 @@ function run_spark_submit_command() {
 		--conf spark.eventLog.enabled=true \
 		--conf spark.eventLog.dir=/tmp/spark-events \
 		--conf spark.driver.userClassPathFirst=true \
+		--conf spark.serializer="org.apache.spark.serializer.KryoSerializer" \
 		--conf spark.driver.extraClassPath="$java_class_path" \
 		--conf spark.driver.extraLibraryPath="$libSparkFHE_path" \
 		--conf spark.driver.extraJavaOptions="-Djava.library.path=$libSparkFHE_path -Dlog4j.configuration=$log4j_file"  \

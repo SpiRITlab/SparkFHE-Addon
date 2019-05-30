@@ -24,7 +24,7 @@ HDFS_PATH="/SparkFHE/HDFSFolder"
 HDFS_URL=$HDFS_HOST$HDFS_PATH
 
 deploy_mode=cluster
-executor_memory=16G
+executor_memory=4G
 total_executor_cores=30
 
 ivysettings_file=$SparkFHE_distribution/$SparkFHE_Addon_name/resources/config/ivysettings.xml
@@ -56,6 +56,7 @@ function run_spark_submit_command() {
 		--conf spark.eventLog.enabled=true \
 		--conf spark.eventLog.dir=/tmp/spark-events \
 		--conf spark.master.rest.enabled=true \
+		--conf spark.serializer="org.apache.spark.serializer.KryoSerializer" \
 		--conf spark.jars.ivySettings="$ivysettings_file" \
 		--conf spark.driver.userClassPathFirst=true \
 		--conf spark.driver.extraClassPath="$java_class_path" \
