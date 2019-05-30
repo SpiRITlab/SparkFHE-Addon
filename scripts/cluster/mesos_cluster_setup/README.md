@@ -20,14 +20,14 @@
     Authorizing access between nodes...
   ```
 
-## Setup instructions
+## Setup instructions if you don't have a Mesos Cluster installed
 On the Mesos master node run the following commands as root:
 ```
 cd /spark-3.0.0-SNAPSHOT-bin-SparkFHE/SparkFHE-Addon/scripts/cluster/mesos_cluster_setup
 bash install_mesos_cluster.bash masterHostname,worker1Hostname,worker2Hostname,...
 ```
 
-## Relevant services to restart
+## If mesos cluster is installed, restart relevant services 
 
 On Master node run:
 ```
