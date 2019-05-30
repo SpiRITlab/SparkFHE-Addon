@@ -29,6 +29,12 @@ function get_concatenated_nodes_string() {
     done
 }
 
+function init_cluster_nodes() {
+    for ((idx=0; idx<${#cluster_nodes[@]}; ++idx)); do
+        ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $MyUserName@${cluster_nodes[idx]} 'mkdir -p /tmp/spark-events'
+    done
+}
+
 function print_list_of_nodes() {
     for ((idx=0; idx<${#cluster_nodes[@]}; ++idx)); do
         printf " Host: %s \t IP: %s\n" "${cluster_nodes[idx]}" "${cluster_nodes_ip[idx]}"
