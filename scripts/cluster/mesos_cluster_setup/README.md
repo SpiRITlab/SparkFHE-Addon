@@ -7,7 +7,7 @@
    sudo chown -R nobody:iotx-PG0 /spark-3.0.0-SNAPSHOT-bin-SparkFHE
    ```
 
-* Ensure that the master node can SSH as root to all other nodes in the cluster. On your laptop (outside the cloudlab environment), follow these [instructions](https://github.com/SpiRITlab/SparkFHE-Addon/tree/fix_install_script/scripts/cluster/cloudlab) to setup the myUsername.txt and Manifest.xml files. You can do these steps in the folder where you installed the SparkFHE distribution.
+* Ensure that the master node can SSH as root to all other nodes in the cluster. On your laptop (outside the cloudlab environment), follow these [instructions](https://github.com/SpiRITlab/SparkFHE-Addon/tree/master/scripts/cluster/cloudlab) to setup the myUsername.txt and Manifest.xml files. You can do these steps in the folder where you installed the SparkFHE distribution.
   * Then, run $> bash authorize_access_between_nodes.bash  to give ssh access between nodes
     You should see messages regarding the authorizing nodes as follow (path and IP address maybe different).
   ```
