@@ -90,11 +90,12 @@ run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyG
 
 
 while true; do
-    read -p "Check http://$1:5050 --- Has KeyGenExample finished?" yn
-    case $yn in
+    read -p "Check http://$1:5050 --- Has KeyGenExample finished? (y/n/q)" ynq
+    case $ynq in
         [Yy]* ) break;;
         [Nn]* ) echo "Can't proceed, please wait...";;
-        * ) echo "Please answer yes (y) or no (n).";;
+        [Qq]* ) exit;;
+        * ) echo "Please answer yes (y), no (n), or quit (q).";;
     esac
 done
 
@@ -109,11 +110,12 @@ run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.exa
 	"$HDFS_URL/gen/keys/my_secret_key.txt"
 
 while true; do
-    read -p "Check http://$1:5050 --- Has EncDecExample finished?" yn
-    case $yn in
+    read -p "Check http://$1:5050 --- Has KeyGenExample finished? (y/n/q)" ynq
+    case $ynq in
         [Yy]* ) break;;
         [Nn]* ) echo "Can't proceed, please wait...";;
-        * ) echo "Please answer yes (y) or no (n).";;
+		[Qq]* ) exit;;
+        * ) echo "Please answer yes (y), no (n), or quit (q).";;
     esac
 done
 
