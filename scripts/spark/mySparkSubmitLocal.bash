@@ -23,7 +23,7 @@ jar_sparkfhe_plugin=$SparkFHE_distribution/jars/$(ls jars | grep spark-fhe)
 libSparkFHE_path=$SparkFHE_distribution/libSparkFHE/lib:$SparkFHE_distribution/libSparkFHE/lib/native:/usr/local/lib
 java_class_path=.:$SparkFHE_distribution/jars
 
-mkdir /tmp/spark-event
+mkdir -p /tmp/spark-events
 
 # run the actual spark submit job
 # inputs: (spark_job_name, main_class_to_run, [opt.arg], [pk], [sk], [ctxt1], [ctxt2])
@@ -40,7 +40,7 @@ function run_spark_submit_command() {
 		--jars $jar_sparkfhe_api,$jar_sparkfhe_plugin \
 		--conf spark.jars.ivySettings="$ivysettings_file" \
 		--conf spark.eventLog.enabled=true \
-		--conf spark.eventLog.dir=/tmp/spark-event \
+		--conf spark.eventLog.dir=/tmp/spark-events \
 		--conf spark.driver.userClassPathFirst=true \
 		--conf spark.driver.extraClassPath="$java_class_path" \
 		--conf spark.driver.extraLibraryPath="$libSparkFHE_path" \
