@@ -20,14 +20,14 @@
     Authorizing access between nodes...
   ```
 
-## Setup instructions if you don't have a Mesos Cluster installed
+## Optional setup instructions if you DON'T have a Mesos Cluster installed
 On the Mesos master node run the following commands as root:
 ```
 cd /spark-3.0.0-SNAPSHOT-bin-SparkFHE/SparkFHE-Addon/scripts/cluster/mesos_cluster_setup
 bash install_mesos_cluster.bash masterHostname,worker1Hostname,worker2Hostname,...
 ```
 
-## If mesos cluster is installed, restart relevant services 
+## If Mesos cluster is installed, restart relevant services 
 
 On Master node run:
 ```
@@ -42,28 +42,33 @@ sudo systemctl restart mesos-slave
 ```
 
 
-## If HDFS is installed, you can start and stop it by these commands.
+## If HDFS is installed, you can start and stop it by these commands on the Master node (or namenode for HDFS).
 To start HDFS: 
 ```
 sudo /usr/local/hadoop/sbin/start-dfs.sh
 ```
-
-To start datanode:
-```
-sudo /usr/local/hadoop/bin/hadoop datanode
-```
-
-Check whether the datanode is online:
-```
-/usr/local/hadoop/bin/hdfs dfsadmin -report
-```
-or 
-http://[MasterNodeIP]:50070
-
-Check spark jobs submitted to Mesos at
-http://[MasterNodeIP]:5050
-
 To stop HDFS: 
 ```
 sudo /usr/local/hadoop/sbin/stop-dfs.sh
 ```
+
+## Other useful commands and information
+Check whether the datanode is online:
+```
+/usr/local/hadoop/bin/hdfs dfsadmin -report
+```
+
+## List of important web UI
+Mesos Web UI
+http://[MasterNodeIP]:5050
+
+Hadoop HDFS web UI
+http://[MasterNodeIP]:50070
+
+Spark job history servers
+Note, you will need to start the server on each worker node first.
+```
+bash /spark-3.0.0-SNAPSHOT-bin-SparkFHE/sbin/start-history-server.sh
+```
+http://[worker1NodeIP]18080
+http://[worker2NodeIP]18080
