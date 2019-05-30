@@ -86,8 +86,12 @@ echo "=========================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.KeyGenExample..."
 echo "=========================================================="
 # generate example key pairs
-run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample 1 $HDFS_HOST
-
+read -p "Do you want to run KeyGenExample? (y/n)" yn
+case $yn in
+	[Yy]* ) run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample 1 $HDFS_HOST;;
+    [Nn]* ) break;;
+    * ) echo "Please answer yes (y) or no (n).";;
+esac
 
 while true; do
     read -p "Check http://$1:5050 --- Has KeyGenExample finished? (y/n/q)" ynq
@@ -105,9 +109,14 @@ echo "=========================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.EncDecExample..."
 echo "=========================================================="
 # generate example ciphertexts
-run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample 1 $HDFS_HOST \
-	"$HDFS_URL/gen/keys/my_public_key.txt" \
-	"$HDFS_URL/gen/keys/my_secret_key.txt"
+read -p "Do you want to run EncDecExample? (y/n)" yn
+case $yn in
+	[Yy]* ) run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample 1 $HDFS_HOST \
+				"$HDFS_URL/gen/keys/my_public_key.txt" \
+				"$HDFS_URL/gen/keys/my_secret_key.txt";;
+    [Nn]* ) break;;
+    * ) echo "Please answer yes (y) or no (n).";;
+esac
 
 while true; do
     read -p "Check http://$1:5050 --- Has KeyGenExample finished? (y/n/q)" ynq
