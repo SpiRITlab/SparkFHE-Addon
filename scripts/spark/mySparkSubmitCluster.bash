@@ -143,9 +143,18 @@ echo "============================================================"
 echo "Starting spiritlab.sparkfhe.example.basic.BasicOPsExample..."
 echo "============================================================"
 # run basic FHE arithmetic operation over encrypted data
-run_spark_submit_command  sparkfhe_basic_OPs_examples  spiritlab.sparkfhe.example.basic.BasicOPsExample 2 $HDFS_HOST \
-	"$HDFS_URL/gen/keys/my_public_key.txt" \
-	"$HDFS_URL/gen/keys/my_secret_key.txt"
+read -p "Do you want to run BasicOPsExample? (y/n)" yn
+case $yn in
+	[Yy]* ) 
+		run_spark_submit_command  sparkfhe_basic_OPs_examples  spiritlab.sparkfhe.example.basic.BasicOPsExample 2 $HDFS_HOST \
+			"$HDFS_URL/gen/keys/my_public_key.txt" \
+			"$HDFS_URL/gen/keys/my_secret_key.txt"
+	;;
+    [Nn]* ) 
+		echo "Skip to the next job.";;
+    * ) 
+		echo "Please answer yes (y) or no (n).";;
+esac
 
 
 
