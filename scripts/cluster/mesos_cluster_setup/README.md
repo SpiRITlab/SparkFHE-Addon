@@ -84,6 +84,7 @@ Hadoop HDFS web UI
 ```
 http://[MasterNodeIP]:50070
 ```
+Note, if you don't see the expected number of datanode, check [our wiki page](https://github.com/SpiRITlab/SparkFHE-Addon/wiki/Errors&Fixes).
 
 Spark job history servers
 ```
