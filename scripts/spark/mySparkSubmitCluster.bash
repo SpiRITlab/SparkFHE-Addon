@@ -24,8 +24,8 @@ HDFS_PATH="/SparkFHE/HDFSFolder"
 HDFS_URL=$HDFS_HOST$HDFS_PATH
 
 deploy_mode=cluster
-executor_memory=4G
-total_executor_cores=30
+executor_memory=2g
+total_executor_cores=4
 
 ivysettings_file=$SparkFHE_distribution/$SparkFHE_Addon_name/resources/config/ivysettings.xml
 log4j_file=$SparkFHE_distribution/$SparkFHE_Addon_name/resources/config/log4j.properties
