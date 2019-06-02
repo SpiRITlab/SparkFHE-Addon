@@ -122,7 +122,7 @@ case $yn in
 				"$HDFS_URL/gen/keys/my_public_key.txt" \
 				"$HDFS_URL/gen/keys/my_secret_key.txt"
 		while true; do
-    		read -p "Check http://$1:5050 --- Has KeyGenExample finished? (y/n/q)" ynq
+    		read -p "Check http://$1:5050 --- Has EncDecExample finished? (y/n/q)" ynq
     		case $ynq in
         		[Yy]* ) break;;
         		[Nn]* ) echo "Can't proceed, please wait...";;
