@@ -220,15 +220,64 @@ download_and_install_awssdk(){
 }
 
 
-download_and_install_hdfs(){
+
+download_and_install_latest_hdfs(){
+    HDFS_GIT_VERSION="3.3.0-SNAPSHOT"
+    echo "Installing $HDFS SDK..."
+    git clone https://github.com/SpiRITlab/hadoop.git $HDFS
+ 
+    echo "In another terminal, execute the following commands: "
+    echo "	cd $DEPS_PATH/$HDFS/"
+    echo "	sudo bash start-build-env.sh"
+    echo "This will prepare a Hadoop development environment in a docker container. In this container, use maven to compile Hadoop packages."
+    echo "	mvn package -Pdist,native -DskipTests"
+    while true; do
+    	read -p "Have the Maven compiliation finished? Yes(y) to continue, or quit (q)" ynq
+    	case $ynq in
+        	[Yy]* ) break;;
+        	[Nn]* ) echo "Can't proceed, please wait...";;
+		[Qq]* ) exit;;
+        	* ) echo "Please answer yes (y), no (n), or quit (q).";;
+    	esac
+    done
+   
+    cd $HDFS/hadoop-hdfs-project
+    set +e
+    ## declare an array variable
+    declare -a hadoop_hdfs_pkgs=( hadoop-hdfs hadoop-hdfs-client hadoop-hdfs-httpfs hadoop-hdfs-native-client hadoop-hdfs-nfs hadoop-hdfs-rbf )
+    for hdfs_pkg in "${hadoop_hdfs_pkgs[@]}"; do
+        echo "Copying compiled files from ${hdfs_pkg}..."
+        cp -Rn ${hdfs_pkg}/target/${hdfs_pkg}-${HDFS_GIT_VERSION}/* $libSparkFHE_root/
+    done
+    set_trap
+
+    # compile hadoop-common source code
+    cd ../hadoop-common-project
+    set +e
+    ## declare an array variable
+    declare -a hadoop_common_pkgs=( hadoop-common )
+    for common_pkg in "${hadoop_common_pkgs[@]}"; do
+        echo "Copying compiled files from ${common_pkg}..."
+        cp -Rn ${common_pkg}/target/${common_pkg}-${HDFS_GIT_VERSION}/* $libSparkFHE_root/
+    done
+    set_trap
+
+    echo "Installing $HDFS SDK... (DONE)"
+    cd ../
+    touch $Marker # add the marker
+    cd ..
+}
+
+
+
+download_and_install_stable_hdfs(){
     echo "Installing $HDFS SDK..."
     wget http://mirror.cc.columbia.edu/pub/software/apache/hadoop/common/$HADOOP_Version/"$HADOOP_Version"-src.tar.gz
     tar zxvf "$HADOOP_Version"-src.tar.gz
     mv "$HADOOP_Version"-src $HDFS
     rm -rf "$HADOOP_Version"-src.tar.gz
     cd $HDFS/hadoop-hdfs-project
-    wget https://raw.githubusercontent.com/SpiRITlab/SparkFHE-Addon/master/scripts/setup/patch/libhdfs.patch
-    patch -p2 < libhdfs.patch
+    patch -p2 < ../../../patch/libhdfs.patch
 
     # installing protobuf-2.5.0 as it is required by hadoop
     mkdir -p protobufCompiled
@@ -244,9 +293,10 @@ download_and_install_hdfs(){
     cd ..
 
     OLD_PATH=$PATH
+    NEW_PATH=${CURRENT_PATH}/protobufCompiled/bin:$PATH
 
     # compile HDFS source code
-    export PATH=${CURRENT_PATH}/protobufCompiled/bin:$PATH && mvn package -Pdist,native -DskipTests
+    export PATH=$NEW_PATH && mvn package -Pdist,native -DskipTests
 
     set +e
     ## declare an array variable
@@ -257,19 +307,22 @@ download_and_install_hdfs(){
     done
     set_trap
 
-    # compile hadoop common source code
+
+    # compile hadoop-common source code
     cd ../hadoop-common-project
-    export PATH=${CURRENT_PATH}/protobufCompiled/bin:$PATH && mvn package -Pdist,native -DskipTests
+    export PATH=$NEW_PATH && mvn package -Pdist,native -DskipTests
+
     set +e
     ## declare an array variable
     declare -a hadoop_common_pkgs=( hadoop-common )
     for common_pkg in "${hadoop_common_pkgs[@]}"; do
         echo "Copying compiled files from ${common_pkg}..."
-        cp -Rn ${common_pkg}/target/${common_pkg}-${HADOOP_Version:7}/* $libSparkFHE_root/
+        cp -Rn ${common_pkg}/target/${common_pkg}-3.1.2/* $libSparkFHE_root/
     done
     set_trap
 
     export PATH=$OLD_PATH
+
 
     echo "Installing $HDFS SDK... (DONE)"
     cd ../
@@ -450,16 +503,31 @@ if [ "$Enable_HDFS" = true ] ; then
     HDFS="HDFS"
     if [ -d $HDFS ]; then
         if [ ! -f $HDFS/$Marker ]; then
-            rm -rf $HDFS # remove the folder
-            download_and_install_hdfs
+            #rm -rf $HDFS # remove the folder
+            download_and_install_latest_hdfs
         else
             echo "$HDFS already installed"
         fi
     else
-        download_and_install_hdfs
+        download_and_install_latest_hdfs
     fi
 fi
 
 
+
+if [ "$Enable_HDFS" = true ] ; then
+    echo
+    echo '------------------------------------------------------------------------'
+    echo "You need to set these envrionment variables in your ~/.bashrc file."
+    echo "========================================================================"
+    echo 'export JAVA_HOME=<your java installation path>'
+    echo 'export HADOOP_HOME=`pwd`/libSparkFHE'
+    echo 'export HADOOP_YARN_HOME=$HADOOP_HOME'
+    echo 'export HADOOP_MAPRED_HOME=$HADOOP_HOME'
+    echo 'export PATH=$PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin'
+    echo 'export HADOOP_CLASSPATH=$(find $HADOOP_HOME -name "*.jar" | xargs echo | tr " " ":")'
+    echo 'export CLASSPATH=$CLASSPATH:$HADOOP_CLASSPATH'
+    echo "========================================================================"
+fi
 
 trap EXIT
