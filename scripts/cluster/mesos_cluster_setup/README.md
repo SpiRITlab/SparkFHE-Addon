@@ -60,11 +60,11 @@ sudo systemctl restart mesos-slave
 ## If HDFS is installed, you can start and stop it by these commands on the Master node (or namenode for HDFS).
 To start HDFS: 
 ```
-sudo /usr/local/hadoop/sbin/start-dfs.sh
+sudo /hadoop/sbin/start-dfs.sh
 ```
 To stop HDFS: 
 ```
-sudo /usr/local/hadoop/sbin/stop-dfs.sh
+sudo /hadoop/sbin/stop-dfs.sh
 ```
 
 
@@ -82,9 +82,9 @@ http://[MasterNodeIP]:5050
 
 Hadoop HDFS web UI
 ```
-http://[MasterNodeIP]:50070
+http://[MasterNodeIP]:9870
 ```
-Note, if you don't see the expected number of datanode, check [our wiki page](https://github.com/SpiRITlab/SparkFHE-Addon/wiki/Errors&Fixes).
+Note, if you don't see the expected number of datanode, check [our wiki page](https://github.com/SpiRITlab/SparkFHE-Addon/wiki/Errors&Fixes). Following [this article](https://blog.usejournal.com/hadoop-3-0-installation-on-ubuntu-18-04-step-by-step-pseudo-distributed-mode-2808f6b8e71f) to setup your HDFS.
 
 Spark job history servers
 ```
