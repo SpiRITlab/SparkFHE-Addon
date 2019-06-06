@@ -69,27 +69,29 @@ run_spark_submit_command  sparkfhe_basic_examples  spiritlab.sparkfhe.example.ba
 
 
 # generate example key pairs
-read -p "Do you want to run KeyGenExample? (y/n)" yn
+read -p "Do you want to run KeyGenExample? (y/n/q)" ynq
 echo "=========================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.KeyGenExample..."
 echo "=========================================================="
-case $yn in
+case $ynq in
 	[Yy]* ) 
 		mkdir -p $SparkFHE_distribution/gen/keys
 		run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample local;;
     [Nn]* ) 
 		echo "Skip to the next job.";;
+	[Qq]* )
+		exit;;
     * ) 
-		echo "Please answer yes (y) or no (n).";;
+		echo "Please answer yes (y), no (n), or quit (q).";;
 esac
 
 
 # generate example ciphertexts
-read -p "Do you want to run EncDecExample? (y/n)" yn
+read -p "Do you want to run EncDecExample? (y/n/q)" ynq
 echo "=========================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.EncDecExample..."
 echo "=========================================================="
-case $yn in
+case $ynq in
 	[Yy]* ) 
 		mkdir -p $SparkFHE_distribution/gen/records
 		run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample local \
@@ -97,44 +99,48 @@ case $yn in
 				"gen/keys/my_secret_key.txt";;
     [Nn]* ) 
 		echo "Skip to the next job.";;
+	[Qq]* )
+		exit;;
     * ) 
-		echo "Please answer yes (y) or no (n).";;
+		echo "Please answer yes (y), no (n), or quit (q).";;
 esac
 
 
 # run basic FHE arithmetic operation over encrypted data
-read -p "Do you want to run BasicOPsExample? (y/n)" yn
+read -p "Do you want to run BasicOPsExample? (y/n/q)" ynq
 echo "============================================================"
 echo "Starting spiritlab.sparkfhe.example.basic.BasicOPsExample..."
 echo "============================================================"
-case $yn in
+case $ynq in
 	[Yy]* ) 
 		run_spark_submit_command  sparkfhe_basic_OPs_examples  spiritlab.sparkfhe.example.basic.BasicOPsExample local \
 			"gen/keys/my_public_key.txt" \
-			"gen/keys/my_secret_key.txt"
-	;;
+			"gen/keys/my_secret_key.txt";;
     [Nn]* ) 
 		echo "Skip to the next job.";;
+	[Qq]* )
+		exit;;
     * ) 
-		echo "Please answer yes (y) or no (n).";;
+		echo "Please answer yes (y), no (n), or quit (q).";;
 esac
 
 
 # run FHE dot product over two encrypted vectors
-read -p "Do you want to run DotProductExample? (y/n)" yn
+read -p "Do you want to run DotProductExample? (y/n/q)" ynq
 echo "=============================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.DotProductExample..."
 echo "=============================================================="
-case $yn in
+case $ynq in
 	[Yy]* ) 
 		run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample local \
 			"gen/keys/my_public_key.txt" \
-			"gen/keys/my_secret_key.txt"
-	;;
+			"gen/keys/my_secret_key.txt";;
     [Nn]* ) 
 		echo "Skip to the next job.";;
+	[Qq]* )
+		exit;;
     * ) 
-		echo "Please answer yes (y) or no (n).";;
+		echo "Please answer yes (y), no (n), or quit (q).";;
 esac
 
 
