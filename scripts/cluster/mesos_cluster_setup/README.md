@@ -60,18 +60,18 @@ sudo systemctl restart mesos-slave
 ## If HDFS is installed, you can start and stop it by these commands on the Master node (or namenode for HDFS).
 To start HDFS: 
 ```
-sudo /hadoop/sbin/start-dfs.sh
+sudo /spark-3.0.0-SNAPSHOT-bin-SparkFHE/hadoop/sbin/start-dfs.sh
 ```
 To stop HDFS: 
 ```
-sudo /hadoop/sbin/stop-dfs.sh
+sudo /spark-3.0.0-SNAPSHOT-bin-SparkFHE/hadoop/sbin/stop-dfs.sh
 ```
 
 
 # Other useful commands and information
 ### Check whether the datanode is online:
 ```
-/usr/local/hadoop/bin/hdfs dfsadmin -report
+/spark-3.0.0-SNAPSHOT-bin-SparkFHE/hadoop/bin/hdfs dfsadmin -report
 ```
 
 ### List of important web UI
