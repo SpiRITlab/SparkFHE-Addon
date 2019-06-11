@@ -24,8 +24,11 @@ HDFS_PATH="/SparkFHE/HDFSFolder"
 HDFS_URL=$HDFS_HOST$HDFS_PATH
 
 deploy_mode=cluster
-executor_memory=2g
-total_executor_cores=4
+driver_memory=16g
+executor_memory=16g
+num_executors=10
+executor_cores=10
+total_executor_cores=16
 
 ivysettings_file=$SparkFHE_distribution/$SparkFHE_Addon_name/resources/config/ivysettings.xml
 log4j_file=$SparkFHE_distribution/$SparkFHE_Addon_name/resources/config/log4j.properties
@@ -48,8 +51,11 @@ function run_spark_submit_command() {
 		--name $spark_job_name \
 		--master $master \
 		--deploy-mode $deploy_mode \
-		--executor-memory $executor_memory \
-		--total-executor-cores $total_executor_cores \
+		--num-executors $num_executors \
+        --executor-cores $executor_cores \
+        --driver-memory $driver_memory \
+        --executor-memory $executor_memory \
+        --total-executor-cores $total_executor_cores \
 		--driver-class-path $java_class_path \
 		--class $main_class_to_run \
 		--jars $jar_sparkfhe_api,$jar_sparkfhe_plugin \
