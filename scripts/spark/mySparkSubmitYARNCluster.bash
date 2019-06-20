@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# This script will run four SparkFHE examples (Key Generation, Encryption/Decryption, Basic Arithmetics, Dot-Product).
+# run this script on the master node
 
+if [ "$#" -eq 0 ]; then
+    echo "bash mySparkSubmitCluster.bash [MESOS_MASTER_NODE_IP_ADDR]"
+    exit
+fi
 
 # uncomment the following if verbose mode is needed
 #verbose="--verbose"
@@ -9,31 +13,36 @@
 ProjectRoot=../../..
 cd $ProjectRoot
 
-SparkFHE_distribution=`pwd`
 SparkFHE_Addon_name="SparkFHE-Addon"
+SparkFHE_distribution="/spark-3.0.0-SNAPSHOT-bin-SparkFHE"
 HADOOP_HOME=$SparkFHE_distribution/hadoop
 
-master=local
-deploy_mode=client
 
-driver_memory=4g
-executor_memory=4g
-num_executors=4
-executor_cores=4
-total_executor_cores=4
+master=yarn
+HDFS_HOST=hdfs://$1:9000
+HDFS_PATH="/SparkFHE/HDFSFolder"
+HDFS_URL=$HDFS_HOST$HDFS_PATH
+
+deploy_mode=cluster
+driver_memory=16g
+executor_memory=16g
+num_executors=10
+executor_cores=10
+total_executor_cores=16
 
 ivysettings_file=$SparkFHE_distribution/$SparkFHE_Addon_name/resources/config/ivysettings.xml
 log4j_file=$SparkFHE_distribution/$SparkFHE_Addon_name/resources/config/log4j.properties
 jar_sparkfhe_examples=$SparkFHE_distribution/examples/jars/$(ls examples/jars | grep sparkfhe-examples-)
 jar_sparkfhe_api=$SparkFHE_distribution/jars/$(ls jars | grep sparkfhe-api-)
 jar_sparkfhe_plugin=$SparkFHE_distribution/jars/$(ls jars | grep spark-fhe)
-libSparkFHE_path=$SparkFHE_distribution/libSparkFHE/lib:$HADOOP_HOME/lib/native:/usr/local/lib:/usr/local/hadoop/lib/native
+libSparkFHE_path=$SparkFHE_distribution/libSparkFHE/lib:$HADOOP_HOME/lib/native:/usr/local/lib
 java_class_path=.:$SparkFHE_distribution/jars
 
 mkdir -p /tmp/spark-events
 
 # run the actual spark submit job
-# inputs: (spark_job_name, main_class_to_run, [opt.arg], [pk], [sk], [ctxt1], [ctxt2])
+# inputs: (spark_job_name, main_class_to_run, [opt.arg] [pk], [sk], [ctxt1], [ctxt2])
+# more info, see https://spark.apache.org/docs/latest/running-on-mesos.html#configuration
 function run_spark_submit_command() {
 	spark_job_name=$1 
 	main_class_to_run=$2 
@@ -50,119 +59,120 @@ function run_spark_submit_command() {
 		--driver-class-path $java_class_path \
 		--class $main_class_to_run \
 		--jars $jar_sparkfhe_api,$jar_sparkfhe_plugin \
-		--conf spark.jars.ivySettings="$ivysettings_file" \
 		--conf spark.eventLog.enabled=true \
 		--conf spark.eventLog.dir=/tmp/spark-events \
-		--conf spark.driver.userClassPathFirst=true \
+		--conf spark.master.rest.enabled=true \
 		--conf spark.serializer="org.apache.spark.serializer.KryoSerializer" \
+		--conf spark.jars.ivySettings="$ivysettings_file" \
+		--conf spark.driver.userClassPathFirst=true \
 		--conf spark.driver.extraClassPath="$java_class_path" \
 		--conf spark.driver.extraLibraryPath="$libSparkFHE_path" \
 		--conf spark.driver.extraJavaOptions="-Djava.library.path=$libSparkFHE_path -Dlog4j.configuration=$log4j_file"  \
 		--conf spark.executor.extraClassPath="$java_class_path" \
 		--conf spark.executor.extraLibraryPath="$libSparkFHE_path" \
+		--conf spark.executor.extraJavaOptions="-Djava.library.path=$libSparkFHE_path -Dlog4j.configuration=$log4j_file"  \ 
 		$jar_sparkfhe_examples $3 $4 $5 $6 $7
 }
 
-# avoid using hadoop for storage
-HADOOP_CONF_DIR=`echo $HADOOP_CONF_DIR`
-if [ "$HADOOP_CONF_DIR" != "" ] ; then
-    unset HADOOP_CONF_DIR
-fi
 
 # increase the size of the vm
 export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m"
 
 
-# run basic operations without SparkFHE stuffs
 echo "========================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.BasicExample..."
 echo "========================================================="
+# run basic operations without SparkFHE stuffs
 run_spark_submit_command  sparkfhe_basic_examples  spiritlab.sparkfhe.example.basic.BasicExample
 
 
-# generate example key pairs
-read -p "Do you want to run KeyGenExample? (y/n/q)" ynq
+
 echo "=========================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.KeyGenExample..."
 echo "=========================================================="
-case $ynq in
+# generate example key pairs
+read -p "Do you want to run KeyGenExample? (y/n)" yn
+case $yn in
 	[Yy]* ) 
-		mkdir -p $SparkFHE_distribution/gen/keys
-		run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample local;;
+		run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample 1 $HDFS_HOST
+		while true; do
+    		read -p "Check http://$1:5050 --- Has KeyGenExample finished? (y/n/q)" ynq
+    		case $ynq in
+        		[Yy]* ) break;;
+        		[Nn]* ) echo "Can't proceed, please wait...";;
+        		[Qq]* ) exit;;
+        		* ) echo "Please answer yes (y), no (n), or quit (q).";;
+    		esac
+		done
+	;;
     [Nn]* ) 
 		echo "Skip to the next job.";;
-	[Qq]* )
-		exit;;
     * ) 
-		echo "Please answer yes (y), no (n), or quit (q).";;
+		echo "Please answer yes (y) or no (n).";;
 esac
 
 
-# generate example ciphertexts
-read -p "Do you want to run EncDecExample? (y/n/q)" ynq
+
+
+
 echo "=========================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.EncDecExample..."
 echo "=========================================================="
-case $ynq in
+# generate example ciphertexts
+read -p "Do you want to run EncDecExample? (y/n)" yn
+case $yn in
 	[Yy]* ) 
-		mkdir -p $SparkFHE_distribution/gen/records
-		run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample local \
-				"gen/keys/my_public_key.txt" \
-				"gen/keys/my_secret_key.txt";;
+		run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample 1 $HDFS_HOST \
+				"$HDFS_URL/gen/keys/my_public_key.txt" \
+				"$HDFS_URL/gen/keys/my_secret_key.txt"
+		while true; do
+    		read -p "Check http://$1:5050 --- Has EncDecExample finished? (y/n/q)" ynq
+    		case $ynq in
+        		[Yy]* ) break;;
+        		[Nn]* ) echo "Can't proceed, please wait...";;
+				[Qq]* ) exit;;
+        		* ) echo "Please answer yes (y), no (n), or quit (q).";;
+    		esac
+		done
+	;;
     [Nn]* ) 
 		echo "Skip to the next job.";;
-	[Qq]* )
-		exit;;
     * ) 
-		echo "Please answer yes (y), no (n), or quit (q).";;
+		echo "Please answer yes (y) or no (n).";;
 esac
 
 
-# run basic FHE arithmetic operation over encrypted data
-read -p "Do you want to run BasicOPsExample? (y/n/q)" ynq
+
 echo "============================================================"
 echo "Starting spiritlab.sparkfhe.example.basic.BasicOPsExample..."
 echo "============================================================"
-case $ynq in
+# run basic FHE arithmetic operation over encrypted data
+read -p "Do you want to run BasicOPsExample? (y/n)" yn
+case $yn in
 	[Yy]* ) 
-		run_spark_submit_command  sparkfhe_basic_OPs_examples  spiritlab.sparkfhe.example.basic.BasicOPsExample local \
-			"gen/keys/my_public_key.txt" \
-			"gen/keys/my_secret_key.txt";;
+		run_spark_submit_command  sparkfhe_basic_OPs_examples  spiritlab.sparkfhe.example.basic.BasicOPsExample 2 $HDFS_HOST \
+			"$HDFS_URL/gen/keys/my_public_key.txt" \
+			"$HDFS_URL/gen/keys/my_secret_key.txt"
+	;;
     [Nn]* ) 
 		echo "Skip to the next job.";;
-	[Qq]* )
-		exit;;
     * ) 
-		echo "Please answer yes (y), no (n), or quit (q).";;
+		echo "Please answer yes (y) or no (n).";;
 esac
 
 
-# run FHE dot product over two encrypted vectors
-read -p "Do you want to run DotProductExample? (y/n/q)" ynq
+
 echo "=============================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.DotProductExample..."
 echo "=============================================================="
-case $ynq in
-	[Yy]* ) 
-		run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample local \
-			"gen/keys/my_public_key.txt" \
-			"gen/keys/my_secret_key.txt";;
-    [Nn]* ) 
-		echo "Skip to the next job.";;
-	[Qq]* )
-		exit;;
-    * ) 
-		echo "Please answer yes (y), no (n), or quit (q).";;
-esac
+# run FHE dot product over two encrypted vectors
+run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample 2 $HDFS_HOST \
+	"$HDFS_URL/gen/keys/my_public_key.txt" \
+	"$HDFS_URL/gen/keys/my_secret_key.txt"
 
 
 
 
-
-# put back the environment variable
-if [ "$HADOOP_CONF_DIR" != "" ] ; then
-    export HADOOP_CONF_DIR="$HADOOP_CONF_DIR"
-fi
 
 
 
