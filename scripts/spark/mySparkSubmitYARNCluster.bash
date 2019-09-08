@@ -3,7 +3,7 @@
 # run this script on the master node
 
 if [ "$#" -eq 0 ]; then
-    echo "bash mySparkSubmitCluster.bash [MESOS_MASTER_NODE_IP_ADDR]"
+    echo "bash mySparkSubmitCluster.bash [MASTER_NODE_IP_ADDR]"
     exit
 fi
 
@@ -24,8 +24,8 @@ HDFS_PATH="/SparkFHE/HDFSFolder"
 HDFS_URL=$HDFS_HOST$HDFS_PATH
 
 deploy_mode=cluster
-driver_memory=16g
-executor_memory=16g
+driver_memory=4g
+executor_memory=4g
 num_executors=10
 executor_cores=10
 total_executor_cores=16
