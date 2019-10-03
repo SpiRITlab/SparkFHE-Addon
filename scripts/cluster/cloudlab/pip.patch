@@ -1,0 +1,20 @@
+--- mesos-1.9.0/src/Makefile.am	2019-09-01 21:18:40.893538752 -0500
++++ mesos-1.9.0/src/Makefile.am.mod	2019-10-02 18:00:53.319071681 -0500
+@@ -2274,7 +2274,7 @@ install-exec-local:
+ 	for whl in $(MESOS_WHLS); do					\
+ 	  PYTHONPATH=$(pippythonpath)					\
+ 	  PYTHONUSERBASE=$(DESTDIR)$(prefix)				\
+-	  $(PYTHON) -c "import pip; pip.main()" install			\
++	  $(PYTHON) -c "from pip._internal import main; main()" install			\
+ 	  --user $(pipinstallargs)					\
+ 	  --ignore-installed						\
+ 	  --find-links=file://$(abs_top_builddir)/src/python/dist	\
+@@ -2284,7 +2284,7 @@ install-exec-local:
+ uninstall-local:
+ 	for whl in $(MESOS_WHLS); do					\
+ 	  PYTHONPATH=$(DESTDIR)$(pythondir):$(pippythonpath)		\
+-	  $(PYTHON) -c "import pip; pip.main()" uninstall		\
++	  $(PYTHON) -c "from pip._internal import main; main()" uninstall		\
+ 	  --yes $$(echo $$whl | cut -d/ -f3 | cut -d- -f1);		\
+ 	done
+ 
