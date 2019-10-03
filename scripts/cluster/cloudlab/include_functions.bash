@@ -16,6 +16,7 @@ echo "Scripts path provided: $Scripts_Dir"
 Cloudlab_Dir=$Scripts_Dir/cloudlab
 Manifest_Filename="$Cloudlab_Dir/Manifest.xml";
 MyUserName=`cat "$Cloudlab_Dir/myUserName.txt" | tr -d '\n'`
+SSH="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 
 function get_nodes_info() {
     cluster_nodes=( `awk 'match($0, /<host name=\"*\"/) && sub(/name=/, "") && gsub(/\"/,"") {print $2}' $Manifest_Filename` )
@@ -31,7 +32,7 @@ function get_concatenated_nodes_string() {
 
 function init_cluster_nodes() {
     for ((idx=0; idx<${#cluster_nodes[@]}; ++idx)); do
-        ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $MyUserName@${cluster_nodes[idx]} 'mkdir -p /tmp/spark-events'
+        $SSH $MyUserName@${cluster_nodes[idx]} 'mkdir -p /tmp/spark-events'
     done
 }
 
@@ -47,7 +48,7 @@ function authorize_access_between_nodes() {
         # Create the user SSH directory, just in case.
         # Retrieve the server-generated RSA private key.
         # Derive the corresponding public key portion.
-        ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $MyUserName@${cluster_nodes[idx]} 'mkdir -p $HOME/.ssh && \
+        $SSH $MyUserName@${cluster_nodes[idx]} 'mkdir -p $HOME/.ssh && \
          chmod 700 $HOME/.ssh && \
          rm -rf $HOME/.ssh/id_rsa && \
          geni-get key > $HOME/.ssh/id_rsa && \
@@ -58,7 +59,7 @@ function authorize_access_between_nodes() {
 
         # If you want to permit login authenticated by the auto-generated key,
         # then append the public half to the authorized_keys file:
-        ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $MyUserName@${cluster_nodes[idx]} 'grep -q -f $HOME/.ssh/id_rsa.pub $HOME/.ssh/authorized_keys || cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys && \
+        $SSH $MyUserName@${cluster_nodes[idx]} 'grep -q -f $HOME/.ssh/id_rsa.pub $HOME/.ssh/authorized_keys || cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys && \
         sudo cp $HOME/.ssh/authorized_keys /root/.ssh/'
     done
 }
