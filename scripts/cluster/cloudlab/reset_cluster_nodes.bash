@@ -14,6 +14,9 @@ function init_master() {
 		sudo systemctl restart mesos-master.service && \
 		sudo systemctl restart zookeeper.service && \
 		sudo systemctl restart spark && \
+		sudo /spark-3.0.0-SNAPSHOT-bin-SparkFHE/hadoop/sbin/stop-dfs.sh && \
+		sudo rm -rf /hdfs/* && \
+		sudo $default_sparkfhe_path/hadoop/bin/hdfs namenode -format && \
 		sudo $default_sparkfhe_path/hadoop/sbin/start-dfs.sh && \
 		cd $default_sparkfhe_path/SparkFHE-Addon && git pull" 
 }
@@ -29,6 +32,7 @@ function init_worker() {
 		$SSH $MyUserName@${cluster_nodes[idx]} "
 			sudo systemctl daemon-reload && \
 			sudo systemctl restart mesos-slave.service && \
+			sudo rm -rf /hdfs/* && \
 			cd $default_sparkfhe_path/SparkFHE-Addon && git pull && \
 			nohup bash $default_sparkfhe_path/sbin/start-history-server.sh &"
 	done 
