@@ -11,7 +11,7 @@ function init_master() {
 	# update ip address on mesos master and restart services
 	$SSH $MyUserName@${cluster_nodes[0]} "
 		sudo $default_sparkfhe_path/hadoop/sbin/start-dfs.sh && \
-		cd $default_sparkfhe_path/SparkFHE-Addon && git pull" 
+		cd $default_sparkfhe_path/SparkFHE-Addon && sudo git pull" 
 }
 
 
@@ -23,7 +23,7 @@ function init_worker() {
 
 		# configure mesos master stuffs and restart services
 		$SSH $MyUserName@${cluster_nodes[idx]} "
-			cd $default_sparkfhe_path/SparkFHE-Addon && git pull && \
+			cd $default_sparkfhe_path/SparkFHE-Addon && sudo git pull && \
 			nohup bash $default_sparkfhe_path/sbin/start-history-server.sh &"
 	done 
 }

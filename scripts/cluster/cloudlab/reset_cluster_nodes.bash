@@ -18,7 +18,7 @@ function init_master() {
 		sudo rm -rf /hdfs/* && \
 		sudo $default_sparkfhe_path/hadoop/bin/hdfs namenode -format && \
 		sudo $default_sparkfhe_path/hadoop/sbin/start-dfs.sh && \
-		cd $default_sparkfhe_path/SparkFHE-Addon && git pull" 
+		cd $default_sparkfhe_path/SparkFHE-Addon && sudo git pull" 
 }
 
 
@@ -33,7 +33,7 @@ function init_worker() {
 			sudo systemctl daemon-reload && \
 			sudo systemctl restart mesos-slave.service && \
 			sudo rm -rf /hdfs/* && \
-			cd $default_sparkfhe_path/SparkFHE-Addon && git pull && \
+			cd $default_sparkfhe_path/SparkFHE-Addon && sudo git pull && \
 			nohup bash $default_sparkfhe_path/sbin/start-history-server.sh &"
 	done 
 }
