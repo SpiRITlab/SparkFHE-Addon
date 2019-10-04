@@ -10,6 +10,10 @@ default_sparkfhe_path=/spark-3.0.0-SNAPSHOT-bin-SparkFHE
 function init_master() {
 	# update ip address on mesos master and restart services
 	$SSH $MyUserName@${cluster_nodes[0]} "
+		sudo systemctl daemon-reload && \
+		sudo systemctl restart mesos-master.service && \
+		sudo systemctl restart zookeeper.service && \
+		sudo systemctl restart spark && \
 		sudo $default_sparkfhe_path/hadoop/sbin/start-dfs.sh && \
 		cd $default_sparkfhe_path/SparkFHE-Addon && git pull" 
 }
@@ -23,6 +27,8 @@ function init_worker() {
 
 		# configure mesos master stuffs and restart services
 		$SSH $MyUserName@${cluster_nodes[idx]} "
+			sudo systemctl daemon-reload && \
+			sudo systemctl restart mesos-slave.service && \
 			cd $default_sparkfhe_path/SparkFHE-Addon && git pull && \
 			nohup bash $default_sparkfhe_path/sbin/start-history-server.sh &"
 	done 
