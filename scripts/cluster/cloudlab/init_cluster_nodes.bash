@@ -22,6 +22,7 @@ function init_master() {
 		sudo systemctl enable mesos-master && \
 		sudo systemctl restart mesos-master.service && \
 		sudo systemctl restart zookeeper.service && \
+		sudo systemctl restart spark && \
 		sudo /spark-3.0.0-SNAPSHOT-bin-SparkFHE/hadoop/sbin/stop-dfs.sh && \
 		sudo rm -rf /hdfs/* && \
 		sudo $default_sparkfhe_path/hadoop/bin/hdfs namenode -format && \
@@ -50,7 +51,8 @@ function init_worker() {
 			sudo systemctl enable mesos-slave && \
 			sudo systemctl restart mesos-slave.service && \
 			sudo rm -rf /hdfs/* && \
-			cd $default_sparkfhe_path/SparkFHE-Addon && git pull"
+			cd $default_sparkfhe_path/SparkFHE-Addon && git pull && \
+			nohup bash $default_sparkfhe_path/sbin/start-history-server.sh &"
 	done 
 }
 
@@ -64,7 +66,7 @@ get_nodes_info
 echo "Configuring the following cluster nodes..."
 print_list_of_nodes
 
-init_cluster_nodes
+setup_cluster_nodes
 
 authorize_access_between_nodes
 

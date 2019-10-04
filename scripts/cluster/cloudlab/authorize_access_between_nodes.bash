@@ -9,6 +9,6 @@ get_nodes_info
 echo "Configuring the following cluster nodes..."
 print_list_of_nodes
 
-init_cluster_nodes
+setup_cluster_nodes
 
 authorize_access_between_nodes

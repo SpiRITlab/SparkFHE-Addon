@@ -30,7 +30,7 @@ function get_concatenated_nodes_string() {
     done
 }
 
-function init_cluster_nodes() {
+function setup_cluster_nodes() {
     for ((idx=0; idx<${#cluster_nodes[@]}; ++idx)); do
         $SSH $MyUserName@${cluster_nodes[idx]} 'mkdir -p /tmp/spark-events'
     done
