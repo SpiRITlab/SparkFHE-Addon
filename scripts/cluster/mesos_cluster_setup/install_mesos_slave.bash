@@ -6,9 +6,8 @@ apt -y install build-essential python-dev python-pip libcurl4-nss-dev libsasl2-d
 
 cd mesos-1.6.0/build
 
-#../configure
-#make -j 14 V=0
-make uninstall
+../configure
+make
 make install
 ldconfig
 
