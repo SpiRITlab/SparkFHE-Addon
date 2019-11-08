@@ -168,9 +168,18 @@ echo "=============================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.DotProductExample..."
 echo "=============================================================="
 # run FHE dot product over two encrypted vectors
+read -p "Do you want to run DotProductExample? (y/n)" yn
+case $yn in
+	[Yy]* ) 
 run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample 2 $HDFS_HOST \
 	"$HDFS_URL/gen/keys/my_public_key.txt" \
 	"$HDFS_URL/gen/keys/my_secret_key.txt"
+;;
+    [Nn]* ) 
+		echo "Skip to the next job.";;
+    * ) 
+		echo "Please answer yes (y) or no (n).";;
+esac
 
 
 
