@@ -19,7 +19,7 @@ MyUserName=`cat "$Cloudlab_Dir/myUserName.txt" | tr -d '\n'`
 SSH="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 
 function get_nodes_info() {
-    cluster_nodes=( `awk 'match($0, /<host name=\"*\"/) && sub(/name=/, "") && gsub(/\"/,"") {print $2}' $Manifest_Filename` )
+    cluster_nodes=( `awk 'match($0, /<login authentication=\"*\"/) && sub(/hostname=/, "") && gsub(/\"/,"") {print $3}' $Manifest_Filename | uniq` )
     cluster_nodes_ip=( `awk 'match($0, /<host name=\"*\"/) && sub(/ipv4=/, "") && gsub(/\"/,"") && sub(/\/\>/,"") {print $3}' $Manifest_Filename` )
 }
 
@@ -32,7 +32,7 @@ function get_concatenated_nodes_string() {
 
 function setup_cluster_nodes() {
     for ((idx=0; idx<${#cluster_nodes_ip[@]}; ++idx)); do
-        $SSH $MyUserName@"${cluster_nodes_ip[idx]}" 'mkdir -p /tmp/spark-events'
+        $SSH $MyUserName@${cluster_nodes_ip[idx]} 'mkdir -p /tmp/spark-events'
     done
 }
 
