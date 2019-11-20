@@ -10,7 +10,7 @@ default_sparkfhe_path=/spark-3.0.0-SNAPSHOT-bin-SparkFHE
 
 function init_master() {
 	# update ip address on mesos master and restart services
-	$SSH $MyUserName@${cluster_nodes[0]} "
+	$SSH $MyUserName@${cluster_nodes_ip[0]} "
 		sudo sed \"s/$default_master_node_ip/${cluster_nodes_ip[0]}/g\" /etc/systemd/system/mesos-master.service > /tmp/mesos-master.service && \
 		sudo mv /tmp/mesos-master.service /etc/systemd/system/mesos-master.service && \
 		sudo sed \"s/$default_master_node_ip/${cluster_nodes_ip[0]}/g\" /etc/systemd/system/spark.service > /tmp/spark.service && \
@@ -33,18 +33,18 @@ function init_master() {
 
 
 function init_worker() {
-	for ((idx=1; idx<${#cluster_nodes[@]}; ++idx)); do
+	for ((idx=1; idx<${#cluster_nodes_ip[@]}; ++idx)); do
 		# remove mesos master stuffs
-		$SSH $MyUserName@${cluster_nodes[idx]} "
+		$SSH $MyUserName@${cluster_nodes_ip[idx]} "
 			sudo apt -y remove zookeeper && \
 			sudo systemctl stop mesos-master.service && sudo systemctl diable mesos-master && \
 			sudo rm -rf /etc/systemd/system/mesos-master.service /etc/systemd/system/spark.service /etc/mesos-master"
 
 		# upload mesos slave files
-		scp -r config/* $MyUserName@${cluster_nodes[idx]}:/tmp/
+		scp -r config/* $MyUserName@${cluster_nodes_ip[idx]}:/tmp/
 
 		# configure mesos master stuffs and restart services
-		$SSH $MyUserName@${cluster_nodes[idx]} "
+		$SSH $MyUserName@${cluster_nodes_ip[idx]} "
 			sudo mv /tmp/mesos-slave.service /etc/systemd/system/mesos-slave.service && \
 			sudo mkdir -p /etc/mesos-slave && sudo mv /tmp/master /etc/mesos-slave/ && \
 			sudo systemctl daemon-reload && \
