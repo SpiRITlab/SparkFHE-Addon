@@ -1,0 +1,73 @@
+# Test this without rebuilding the docker image $> docker-compose up
+# Test this with rebuilding the docker image $> docker-compose up --build
+
+version: '3.7'
+
+services:
+  master:
+    image: sparkfhe/sparkfhe-dist
+    container_name: master
+    working_dir: /spark-3.0.0-SNAPSHOT-bin-SparkFHE
+    networks:
+      - spakrfhe-network
+    ports:
+      - "5050"    # Mesos web UI port
+      - "7077"    # Mesos job submission port
+      - "9870"    # HDFS web UI port
+      - "9000"    # HDFS client API port
+    volumes:
+      - ./.sparkfhe-cache:/spark-3.0.0-SNAPSHOT-bin-SparkFHE/.sparkfhe-cache/
+    command:
+      - /bin/bash
+      - -c
+      - |
+        echo "Initialize master...done!"
+        tail -f /dev/null
+
+
+  worker1:
+    image: sparkfhe/sparkfhe-dist
+    container_name: worker1
+    depends_on:
+      - master
+    working_dir: /spark-3.0.0-SNAPSHOT-bin-SparkFHE
+    networks:
+      - spakrfhe-network
+    ports:
+      - "18080"    # Spark history server port 
+    volumes:
+      - ./.sparkfhe-cache:/spark-3.0.0-SNAPSHOT-bin-SparkFHE/.sparkfhe-cache/
+    command:
+      - /bin/bash
+      - -c
+      - |
+        echo "Initialize worker1...done!"
+        tail -f /dev/null
+
+
+  worker2:
+    image: sparkfhe/sparkfhe-dist
+    container_name: worker2
+    depends_on:
+      - master
+    working_dir: /spark-3.0.0-SNAPSHOT-bin-SparkFHE
+    networks:
+      - spakrfhe-network
+    ports:
+      - "18080"     # Spark history server port 
+    volumes:
+      - ./.sparkfhe-cache:/spark-3.0.0-SNAPSHOT-bin-SparkFHE/.sparkfhe-cache/
+    command:
+      - /bin/bash
+      - -c
+      - |
+        echo "Initialize worker2...done!"
+        tail -f /dev/null
+
+
+
+
+networks:
+  spakrfhe-network:
+volumes:
+  .sparkfhe-cache:
