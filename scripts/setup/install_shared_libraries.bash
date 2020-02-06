@@ -11,11 +11,18 @@ CMAKE_Version=cmake-3.15.2
 SEAL_Version=3.4.2
 
 
-
 ### Optional packages
 Enable_AWSS3=false      # AWSS3
 Enable_HDFS=false       # HDFS
 ######################
+
+if [ "$(uname -s)" == "Darwin" ] ; then
+  CCcompiler=gcc-9
+  CPPcompiler=g++-9
+else
+  CCcompiler=gcc-8
+  CPPcompiler=g++-8
+fi
 
 # init
 Marker=SparkFHE_succeded
