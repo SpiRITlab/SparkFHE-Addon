@@ -19,20 +19,20 @@ MyUserName=`cat "$Cloudlab_Dir/myUserName.txt" | tr -d '\n'`
 SSH="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 
 function get_nodes_info() {
-    cluster_nodes=( `awk 'match($0, /<host name=\"*\"/) && sub(/name=/, "") && gsub(/\"/,"") {print $2}' $Manifest_Filename` )
+    cluster_nodes=( `awk 'match($0, /<login authentication=\"*\"/) && sub(/hostname=/, "") && gsub(/\"/,"") {print $3}' $Manifest_Filename | uniq` )
     cluster_nodes_ip=( `awk 'match($0, /<host name=\"*\"/) && sub(/ipv4=/, "") && gsub(/\"/,"") && sub(/\/\>/,"") {print $3}' $Manifest_Filename` )
 }
 
 function get_concatenated_nodes_string() {
-    concatenated_nodes_string="${cluster_nodes[0]}"
-    for ((idx=1; idx<${#cluster_nodes[@]}; ++idx)); do
-        concatenated_nodes_string="$concatenated_nodes_string,${cluster_nodes[idx]}"
+    concatenated_nodes_string="${cluster_nodes_ip[0]}"
+    for ((idx=1; idx<${#cluster_nodes_ip[@]}; ++idx)); do
+        concatenated_nodes_string="$concatenated_nodes_string,${cluster_nodes_ip[idx]}"
     done
 }
 
 function setup_cluster_nodes() {
-    for ((idx=0; idx<${#cluster_nodes[@]}; ++idx)); do
-        $SSH $MyUserName@${cluster_nodes[idx]} 'mkdir -p /tmp/spark-events'
+    for ((idx=0; idx<${#cluster_nodes_ip[@]}; ++idx)); do
+        $SSH $MyUserName@${cluster_nodes_ip[idx]} 'mkdir -p /tmp/spark-events'
     done
 }
 
@@ -44,11 +44,11 @@ function print_list_of_nodes() {
 
 function authorize_access_between_nodes() {
     echo "Authorizing access between nodes..."
-    for ((idx=0; idx<${#cluster_nodes[@]}; ++idx)); do
+    for ((idx=0; idx<${#cluster_nodes_ip[@]}; ++idx)); do
         # Create the user SSH directory, just in case.
         # Retrieve the server-generated RSA private key.
         # Derive the corresponding public key portion.
-        $SSH $MyUserName@${cluster_nodes[idx]} 'mkdir -p $HOME/.ssh && \
+        $SSH $MyUserName@${cluster_nodes_ip[idx]} 'mkdir -p $HOME/.ssh && \
          chmod 700 $HOME/.ssh && \
          rm -rf $HOME/.ssh/id_rsa && \
          geni-get key > $HOME/.ssh/id_rsa && \
@@ -59,7 +59,7 @@ function authorize_access_between_nodes() {
 
         # If you want to permit login authenticated by the auto-generated key,
         # then append the public half to the authorized_keys file:
-        $SSH $MyUserName@${cluster_nodes[idx]} 'grep -q -f $HOME/.ssh/id_rsa.pub $HOME/.ssh/authorized_keys || cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys && \
+        $SSH $MyUserName@${cluster_nodes_ip[idx]} 'grep -q -f $HOME/.ssh/id_rsa.pub $HOME/.ssh/authorized_keys || cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys && \
         sudo cp $HOME/.ssh/authorized_keys /root/.ssh/'
     done
 }
@@ -67,10 +67,10 @@ function authorize_access_between_nodes() {
 
 function git_pull_all() {
     KeyName=$(basename $1)
-    for ((idx=0; idx<${#cluster_nodes[@]}; ++idx)); do
-        echo "Updating git on ${cluster_nodes[idx]}..."
-        echo "yes" | scp $1 $MyUserName@${cluster_nodes[idx]}:~/.ssh/
-        ssh -n -f $MyUserName@${cluster_nodes[idx]} "cd /SparkFHE && \
+    for ((idx=0; idx<${#cluster_nodes_ip[@]}; ++idx)); do
+        echo "Updating git on ${cluster_nodes_ip[idx]}..."
+        echo "yes" | scp $1 $MyUserName@${cluster_nodes_ip[idx]}:~/.ssh/
+        ssh -n -f $MyUserName@${cluster_nodes_ip[idx]} "cd /SparkFHE && \
             git reset --hard && \
             git checkout master && \
             ssh-keyscan -H github.com >> ~/.ssh/known_hosts && \

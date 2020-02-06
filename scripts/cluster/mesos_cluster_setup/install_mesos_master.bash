@@ -8,12 +8,12 @@ apt -y install build-essential python-dev python-pip libcurl4-nss-dev libsasl2-d
 wget http://archive.apache.org/dist/mesos/1.6.0/mesos-1.6.0.tar.gz
 tar -xzvf mesos-1.6.0.tar.gz
 cd mesos-1.6.0
+patch -p0 < ../pip.patch
 mkdir build
 cd build
 
 ../configure
-make -j 14 V=0
-make uninstall
+make AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=:
 make install
 ldconfig
 cd $sourcePath

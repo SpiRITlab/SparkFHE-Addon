@@ -26,9 +26,9 @@ HDFS_URL=$HDFS_HOST$HDFS_PATH
 deploy_mode=cluster
 driver_memory=4g
 executor_memory=4g
-num_executors=10
-executor_cores=10
-total_executor_cores=16
+num_executors=4
+executor_cores=4
+total_executor_cores=4
 
 ivysettings_file=$SparkFHE_distribution/$SparkFHE_Addon_name/resources/config/ivysettings.xml
 log4j_file=$SparkFHE_distribution/$SparkFHE_Addon_name/resources/config/log4j.properties
@@ -168,9 +168,18 @@ echo "=============================================================="
 echo "Starting spiritlab.sparkfhe.example.basic.DotProductExample..."
 echo "=============================================================="
 # run FHE dot product over two encrypted vectors
+read -p "Do you want to run DotProductExample? (y/n)" yn
+case $yn in
+	[Yy]* ) 
 run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample 2 $HDFS_HOST \
 	"$HDFS_URL/gen/keys/my_public_key.txt" \
 	"$HDFS_URL/gen/keys/my_secret_key.txt"
+;;
+    [Nn]* ) 
+		echo "Skip to the next job.";;
+    * ) 
+		echo "Please answer yes (y) or no (n).";;
+esac
 
 
 
