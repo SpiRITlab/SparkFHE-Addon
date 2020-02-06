@@ -8,6 +8,7 @@ BOOST_Version=boost_1_68_0
 ARMADILLO_Version=armadillo-9.200.6
 HADOOP_Version=hadoop-2.9.2
 CMAKE_Version=cmake-3.15.2
+SEAL_Version=3.4.2
 
 
 
@@ -90,9 +91,9 @@ install_cmake() {
     cd ..
 }
 
-install_boost(){
+install_boost() {
     echo "Installing $BOOST..."
-    wget https://dl.bintray.com/boostorg/release/1.68.0/source/$BOOST_Version.tar.bz2
+    wget https://dl.bintray.com/boostorg/release/$(echo $BOOST_Version | cut -d'_' -f2,3,4 | tr '_' '.')/source/$BOOST_Version.tar.bz2
     tar jxf "$BOOST_Version".tar.bz2
     rm "$BOOST_Version".tar.bz2
     mv $BOOST_Version $BOOST
@@ -104,18 +105,18 @@ install_boost(){
     cd ..
 }
 
-install_googletest(){
+install_googletest() {
     echo "Installing $GoogleTEST..."
     git clone https://github.com/google/googletest.git $GoogleTEST
     cd $GoogleTEST
-    $CMAKE_EXE -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
-    make CXX=g++-8 LD=g++-8; make install
+    $CMAKE_EXE -DCMAKE_CXX_COMPILER=$CPPcompiler -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    make CXX=$CPPcompiler LD=$CPPcompiler; make install
     echo "Installing $GoogleTEST... (DONE)"
     touch $Marker # add the marker
     cd ..
 }
 
-install_swig(){
+install_swig() {
     echo "Installing $SWIG..."
     wget http://prdownloads.sourceforge.net/swig/$SWIG_Version.tar.gz
     tar xzf $SWIG_Version.tar.gz
@@ -129,18 +130,18 @@ install_swig(){
     cd ..
 }
 
-download_and_install_rapidjson(){
+install_rapidjson() {
     echo "Installing $RapidJSON..."
     git clone https://github.com/Tencent/rapidjson.git $RapidJSON
     cd $RapidJSON
-    $CMAKE_EXE -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    $CMAKE_EXE -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root -DRAPIDJSON_HAS_STDSTRING=ON .
     make install
     echo "Installing $RapidJSON... (DONE)"
     touch $Marker # add the marker
     cd ..
 }
 
-install_gmp(){
+install_gmp() {
     echo "Installing $GMP..."
     wget https://ftp.gnu.org/gnu/gmp/$GMP_Version.tar.bz2
     tar jxf $GMP_Version.tar.bz2
@@ -154,32 +155,32 @@ install_gmp(){
     cd ..
 }
 
-download_and_install_gf2x(){
+install_gf2x() {
     wget https://gforge.inria.fr/frs/download.php/file/36934/$GF2X_Version.tar.gz
     tar -xf $GF2X_Version.tar.gz
     rm $GF2X_Version.tar.gz
     mv $GF2X_Version GF2X
     cd GF2X
     ./configure ABI=64 CFLAGS="-m64 -O2 -fPIC" --prefix=$libSparkFHE_root
-    make CXX=g++-8
-    make CXX=g++-8 tune-lowlevel
-    make CXX=g++-8 tune-toom
-    make CXX=g++-8 check
-    make CXX=g++-8 install
+    make CXX=$CPPcompiler
+    make CXX=$CPPcompiler tune-lowlevel
+    make CXX=$CPPcompiler tune-toom
+    make CXX=$CPPcompiler check
+    make CXX=$CPPcompiler install
     echo "Installing $GF2X... (DONE)"
     touch $Marker # add the marker
     cd ..
 }
 
-download_and_install_ntl(){
+install_ntl() {
     echo "Installing $NTL..."
     wget http://www.shoup.net/ntl/$NTL_Version.tar.gz
     tar xzf $NTL_Version.tar.gz
     rm $NTL_Version.tar.gz
     mv $NTL_Version $NTL
     cd $NTL/src
-    ./configure TUNE=x86 NTL_GF2X_LIB=on DEF_PREFIX=$libSparkFHE_root NTL_THREADS=on NTL_THREAD_BOOST=on NTL_GMP_LIP=on NATIVE=off CXX=g++-8
-    make CXX=g++-8 CXXFLAGS="-fPIC -O3"
+    ./configure TUNE=x86 NTL_GF2X_LIB=on DEF_PREFIX=$libSparkFHE_root NTL_THREADS=on NTL_THREAD_BOOST=on NTL_GMP_LIP=on NATIVE=off CXX=$CPPcompiler
+    make CXX=$CPPcompiler CXXFLAGS="-fPIC -O3"
     make install
     echo "Installing $NTL... (DONE)"
     cd ..
@@ -187,27 +188,27 @@ download_and_install_ntl(){
     cd ..
 }
 
-download_and_install_armadillo(){
+install_armadillo() {
     echo "Installing $ARMADILLO..."
     wget https://sourceforge.net/projects/arma/files/$ARMADILLO_Version.tar.xz
     tar xf $ARMADILLO_Version.tar.xz
     rm $ARMADILLO_Version.tar.xz
     mv $ARMADILLO_Version $ARMADILLO
     cd $ARMADILLO
-    $CMAKE_EXE -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    $CMAKE_EXE -DCMAKE_CXX_COMPILER=$CPPcompiler -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make; make install
     echo "Installing $ARMADILLO... (DONE)"
     touch $Marker # add the marker
     cd ..
 }
 
-download_and_install_helib(){
+install_helib() {
     echo "Installing $HElib..."
     git clone https://github.com/SpiRITlab/HElib.git $HElib
     cd $HElib
     git checkout master-SparkFHE
-    $CMAKE_EXE -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
-    make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
+    $CMAKE_EXE -DCMAKE_CXX_COMPILER=$CPPcompiler -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    make CC=$GCCcompiler LD=$CPPcompiler LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
     mkdir -p $libSparkFHE_include/HElib/
     cp src/*.h $libSparkFHE_include/HElib/
     cp lib/libfhe.a $libSparkFHE_lib/libfhe.a
@@ -216,27 +217,64 @@ download_and_install_helib(){
     cd ..
 }
 
-download_and_install_seal(){
-    echo "Installing $SEAL..."
-    git clone https://github.com/SpiRITlab/SEAL.git $SEAL
-    cd $SEAL
-    git checkout master-SparkFHE
-    cd src
-    $CMAKE_EXE -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
-    make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
+install_gsl() {
+    echo "Installing $GSL..."
+    git clone https://github.com/SpiRITlab/GSL.git $GSL
+    cd $GSL
+    $CMAKE_EXE -DCMAKE_CXX_COMPILER=$CPPcompiler -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root --build .
+    make CC=$GCCcompiler LD=$CPPcompiler LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
     make install
-    echo "Installing $SEAL... (DONE)"
-    cd ..
+    echo "Installing $GSL... (DONE)"
     touch $Marker # add the marker
     cd ..
 }
 
-download_and_install_awssdk(){
+install_zlib() {
+    echo "Installing $ZLIB..."
+    git clone https://github.com/SpiRITlab/zlib.git $ZLIB
+    cd $ZLIB
+    $CMAKE_EXE -DCMAKE_CXX_COMPILER=$CPPcompiler -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    make CC=$GCCcompiler LD=$CPPcompiler LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
+    make install
+    echo "Installing $ZLIB... (DONE)"
+    touch $Marker # add the marker
+    cd ..
+}
+
+install_base64() {
+    echo "Installing $BASE64..."
+    git clone https://github.com/SpiRITlab/libb64.git $BASE64
+    cd $BASE64
+    make
+    cp -r include/b64/ $libSparkFHE_include/b64
+    cp src/libb64.a $libSparkFHE_lib
+    cp base64/base64 $libSparkFHE_bin
+    echo "Installing $BASE64... (DONE)"
+    touch $Marker # add the marker
+    cd ..
+}
+
+install_seal() {
+    echo "Installing $SEAL..."
+    git clone https://github.com/microsoft/SEAL.git $SEAL
+    cd $SEAL
+    git checkout $SEAL_Version
+    cd native/src
+    $CMAKE_EXE -DCMAKE_CXX_COMPILER=$CPPcompiler -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root -DMSGSL_ROOT=../../../$GSL/include -DZLIB_ROOT=../../../$ZLIB .
+    make CC=$GCCcompiler LD=$CPPcompiler LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
+    make install
+    echo "Installing $SEAL... (DONE)"
+    cd ../..
+    touch $Marker # add the marker
+    cd ..
+}
+
+install_awssdk() {
     echo "Installing $AWSSDK..."
     git clone https://github.com/aws/aws-sdk-cpp.git $AWSSDK
     cd $AWSSDK;
     $CMAKE_EXE -DCMAKE_BUILD_TYPE=Debug -DBUILD_ONLY="s3" -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
-    make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
+    make CC=$GCCcompiler LD=$CPPcompiler LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
     make install
     cp AWSSDK/* cmake/
     echo "Installing $AWSSDK... (DONE)"
@@ -246,7 +284,7 @@ download_and_install_awssdk(){
 
 
 
-download_and_install_latest_hdfs(){
+install_latest_hdfs(){
     HDFS_GIT_VERSION="3.3.0-SNAPSHOT"
     echo "Installing $HDFS SDK..."
     git clone https://github.com/SpiRITlab/hadoop.git $HDFS
@@ -295,7 +333,7 @@ download_and_install_latest_hdfs(){
 
 
 
-download_and_install_stable_hdfs(){
+install_stable_hdfs(){
     echo "Installing $HDFS SDK..."
     wget http://mirror.cc.columbia.edu/pub/software/apache/hadoop/common/$HADOOP_Version/"$HADOOP_Version"-src.tar.gz
     tar zxvf "$HADOOP_Version"-src.tar.gz
@@ -425,12 +463,12 @@ RapidJSON="RapidJSON"
 if [ -d $RapidJSON ]; then
     if [ ! -f $RapidJSON/$Marker ]; then
         rm -rf $RapidJSON # remove the folder
-        download_and_install_rapidjson
+        install_rapidjson
     else
         echo "$RapidJSON already installed"
     fi
 else
-    download_and_install_rapidjson
+    install_rapidjson
 fi
 
 
@@ -455,12 +493,12 @@ GF2X="GF2X"
 if [ -d $GF2X ]; then
     if [ ! -f $GF2X/$Marker ]; then
         rm -rf $GF2X # remove the folder
-        download_and_install_gf2x
+        install_gf2x
     else
         echo "$GF2X already installed"
     fi
 else
-    download_and_install_gf2x
+    install_gf2x
 fi
 
 # NTL is a C++ library for doing number theory. NTL supports arbitrary
@@ -471,12 +509,12 @@ NTL="NTL"
 if [ -d $NTL ]; then
     if [ ! -f $NTL/$Marker ]; then
         rm -rf $NTL # remove the folder
-        download_and_install_ntl
+        install_ntl
     else
         echo "$NTL already installed"
     fi
 else
-    download_and_install_ntl
+    install_ntl
 fi
 
 # Armadillo is a linear algebra software library for the C++.
@@ -484,12 +522,12 @@ ARMADILLO="ARMADILLO"
 if [ -d $ARMADILLO ]; then
     if [ ! -f $ARMADILLO/$Marker ]; then
         rm -rf $ARMADILLO # remove the folder
-        download_and_install_armadillo
+        install_armadillo
     else
         echo "$ARMADILLO already installed"
     fi
 else
-    download_and_install_armadillo
+    install_armadillo
 fi
 
 # HElib is a software library that implements homomorphic encryption (HE).
@@ -497,12 +535,12 @@ HElib="HElib"
 if [ -d $HElib ]; then
      if [ ! -f $HElib/$Marker ]; then
         rm -rf $HElib # remove the folder
-        download_and_install_helib
+        install_helib
     else
         echo "$HElib already installed"
     fi
 else
-    download_and_install_helib
+    install_helib
 fi
 
 
@@ -511,12 +549,12 @@ SEAL="SEAL"
 if [ -d $SEAL ]; then
     if [ ! -f $SEAL/$Marker ]; then
         rm -rf $SEAL # remove the folder
-        download_and_install_seal
+        install_seal
     else
         echo "$SEAL already installed"
     fi
 else
-   download_and_install_seal
+   install_seal
 fi
 
 
@@ -526,12 +564,12 @@ if [ "$Enable_AWSS3" = true ] ; then
     if [ -d $AWSSDK ]; then
         if [ ! -f $AWSSDK/$Marker ]; then
             rm -rf $AWSSDK # remove the folder
-            download_and_install_awssdk
+            install_awssdk
         else
             echo "$AWSSDK already installed"
         fi
     else
-        download_and_install_awssdk
+        install_awssdk
     fi
 fi
 
@@ -541,12 +579,12 @@ if [ "$Enable_HDFS" = true ] ; then
     if [ -d $HDFS ]; then
         if [ ! -f $HDFS/$Marker ]; then
             #rm -rf $HDFS # remove the folder
-            download_and_install_latest_hdfs
+            install_latest_hdfs
         else
             echo "$HDFS already installed"
         fi
     else
-        download_and_install_latest_hdfs
+        install_latest_hdfs
     fi
 fi
 
