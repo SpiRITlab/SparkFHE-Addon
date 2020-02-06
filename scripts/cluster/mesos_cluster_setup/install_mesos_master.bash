@@ -13,7 +13,7 @@ mkdir build
 cd build
 
 ../configure
-make
+make AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=:
 make install
 ldconfig
 cd $sourcePath
