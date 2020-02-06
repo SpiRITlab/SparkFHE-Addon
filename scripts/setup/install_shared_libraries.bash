@@ -7,6 +7,7 @@ SWIG_Version=swig-3.0.12
 BOOST_Version=boost_1_68_0
 ARMADILLO_Version=armadillo-9.200.6
 HADOOP_Version=hadoop-2.9.2
+CMAKE_Version=cmake-3.15.2
 
 
 
@@ -19,11 +20,20 @@ Enable_HDFS=false       # HDFS
 Marker=SparkFHE_succeded
 PROJECT_ROOT_PATH=`pwd`/"../../../"
 DEPS_PATH="$PROJECT_ROOT_PATH/deps"
-libSparkFHE_root=$PROJECT_ROOT_PATH/libSparkFHE
-libSparkFHE_include=$PROJECT_ROOT_PATH/libSparkFHE/include
-libSparkFHE_lib=$PROJECT_ROOT_PATH/libSparkFHE/lib
-libSparkFHE_share=$PROJECT_ROOT_PATH/libSparkFHE/share
-mkdir -p $libSparkFHE_include $libSparkFHE_lib $libSparkFHE_share $DEPS_PATH
+
+# determine whether this script is ran inside a docker container
+if [ ! -f "/proc/1/cgroup" ] || [ "$(grep 'docker\|lxc' /proc/1/cgroup)" == "" ] ; then
+  # if not, install dependencies into a self-contained folder
+  libSparkFHE_root=$PROJECT_ROOT_PATH/libSparkFHE
+else
+  # if docker container, install dependencies into /usr/local
+  libSparkFHE_root=/usr/local
+fi
+mkdir -p $libSparkFHE_root/{include,lib,bin,share} $libSparkFHE_root/bin/{keys,records} $DEPS_PATH
+libSparkFHE_include=$libSparkFHE_root/include
+libSparkFHE_lib=$libSparkFHE_root/lib
+libSparkFHE_bin=$libSparkFHE_root/bin
+libSparkFHE_share=$libSparkFHE_root/share
 
 #Boost Libraries (Comma Separated library names)
 boost_libraries=iostreams
@@ -65,6 +75,21 @@ parse_args $1
 # functions to minimize code redundancy
 # =============================================================================
 
+install_cmake() {
+    echo "Installing $CMAKE..."
+    wget https://github.com/Kitware/CMake/releases/download/v$(echo $CMAKE_Version | cut -d'-' -f2)/$CMAKE_Version.tar.gz
+    tar -zxvf $CMAKE_Version.tar.gz
+    rm $CMAKE_Version.tar.gz
+    mv $CMAKE_Version $CMAKE
+    cd $CMAKE
+    ./bootstrap --prefix=$libSparkFHE_root
+    make
+    make install
+    echo "Installing $CMAKE... (DONE)"
+    touch $Marker # add the marker
+    cd ..
+}
+
 install_boost(){
     echo "Installing $BOOST..."
     wget https://dl.bintray.com/boostorg/release/1.68.0/source/$BOOST_Version.tar.bz2
@@ -83,7 +108,7 @@ install_googletest(){
     echo "Installing $GoogleTEST..."
     git clone https://github.com/google/googletest.git $GoogleTEST
     cd $GoogleTEST
-    cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    $CMAKE_EXE -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make CXX=g++-8 LD=g++-8; make install
     echo "Installing $GoogleTEST... (DONE)"
     touch $Marker # add the marker
@@ -108,7 +133,7 @@ download_and_install_rapidjson(){
     echo "Installing $RapidJSON..."
     git clone https://github.com/Tencent/rapidjson.git $RapidJSON
     cd $RapidJSON
-    cmake -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    $CMAKE_EXE -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make install
     echo "Installing $RapidJSON... (DONE)"
     touch $Marker # add the marker
@@ -169,7 +194,7 @@ download_and_install_armadillo(){
     rm $ARMADILLO_Version.tar.xz
     mv $ARMADILLO_Version $ARMADILLO
     cd $ARMADILLO
-    cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    $CMAKE_EXE -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make; make install
     echo "Installing $ARMADILLO... (DONE)"
     touch $Marker # add the marker
@@ -181,7 +206,7 @@ download_and_install_helib(){
     git clone https://github.com/SpiRITlab/HElib.git $HElib
     cd $HElib
     git checkout master-SparkFHE
-    cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    $CMAKE_EXE -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
     mkdir -p $libSparkFHE_include/HElib/
     cp src/*.h $libSparkFHE_include/HElib/
@@ -197,7 +222,7 @@ download_and_install_seal(){
     cd $SEAL
     git checkout master-SparkFHE
     cd src
-    cmake -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    $CMAKE_EXE -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
     make install
     echo "Installing $SEAL... (DONE)"
@@ -210,7 +235,7 @@ download_and_install_awssdk(){
     echo "Installing $AWSSDK..."
     git clone https://github.com/aws/aws-sdk-cpp.git $AWSSDK
     cd $AWSSDK;
-    cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_ONLY="s3" -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
+    $CMAKE_EXE -DCMAKE_BUILD_TYPE=Debug -DBUILD_ONLY="s3" -DCMAKE_INSTALL_PREFIX=$libSparkFHE_root .
     make CC=g++-8 LD=g++-8 LDLIBS+=-L$libSparkFHE_lib CFLAGS+=-I$libSparkFHE_include CFLAGS+=-fPIC
     make install
     cp AWSSDK/* cmake/
@@ -335,6 +360,18 @@ download_and_install_stable_hdfs(){
 # installing dependencies
 # =============================================================================
 
+CMAKE="CMAKE"
+CMAKE_EXE=$libSparkFHE_bin/cmake
+if [ -d $CMAKE ]; then
+    if [ ! -f $CMAKE/$Marker ]; then
+        rm -rf $CMAKE # remove the folder
+        install_cmake
+    else
+        echo "$CMAKE library already installed"
+    fi
+else
+    install_cmake
+fi
 
 # Boost is a set of libraries for the C++ programming language that provide
 # support for tasks and structures such as linear algebra, pseudorandom number
