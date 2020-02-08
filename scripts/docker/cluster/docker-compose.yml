@@ -5,7 +5,10 @@ version: '3.7'
 
 services:
   master:
-    image: sparkfhe/sparkfhe-dist
+    build:
+      context: .
+      dockerfile: SparkFHE-Master.dockerfile
+    image: sparkfhe/sparkfhe-master
     container_name: master
     working_dir: /spark-3.0.0-SNAPSHOT-bin-SparkFHE
     networks:
@@ -21,12 +24,16 @@ services:
       - /bin/bash
       - -c
       - |
-        echo "Initialize master...done!"
+        echo "Initialize master..."
+        /spark-3.0.0-SNAPSHOT-bin-SparkFHE/SparkFHE-Addon/scripts/docker/cluster/SparkFHE-master-startscript.bash &
         tail -f /dev/null
 
 
   worker1:
-    image: sparkfhe/sparkfhe-dist
+    build:
+      context: .
+      dockerfile: SparkFHE-Worker.dockerfile
+    image: sparkfhe/sparkfhe-worker
     container_name: worker1
     depends_on:
       - master
@@ -41,15 +48,17 @@ services:
       - /bin/bash
       - -c
       - |
-        echo "Initialize worker1...done!"
+        echo "Initialize worker1..."
+        /spark-3.0.0-SNAPSHOT-bin-SparkFHE/SparkFHE-Addon/scripts/docker/cluster/SparkFHE-worker-startscript.bash &
         tail -f /dev/null
 
 
   worker2:
-    image: sparkfhe/sparkfhe-dist
+    image: sparkfhe/sparkfhe-worker
     container_name: worker2
     depends_on:
       - master
+      - worker1
     working_dir: /spark-3.0.0-SNAPSHOT-bin-SparkFHE
     networks:
       - spakrfhe-network
@@ -61,7 +70,8 @@ services:
       - /bin/bash
       - -c
       - |
-        echo "Initialize worker2...done!"
+        echo "Initialize worker2..."
+        /spark-3.0.0-SNAPSHOT-bin-SparkFHE/SparkFHE-Addon/scripts/docker/cluster/SparkFHE-worker-startscript.bash &
         tail -f /dev/null
 
 
