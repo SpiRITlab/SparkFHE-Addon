@@ -186,7 +186,7 @@ install_ntl() {
     rm $NTL_Version.tar.gz
     mv $NTL_Version $NTL
     cd $NTL/src
-    ./configure TUNE=x86 NTL_GF2X_LIB=on DEF_PREFIX=$libSparkFHE_root NTL_THREADS=on NTL_THREAD_BOOST=on NTL_GMP_LIP=on NATIVE=off CXX=$CPPcompiler
+    ./configure TUNE=x86 NTL_GF2X_LIB=on DEF_PREFIX=$libSparkFHE_root PREFIX=$(DEF_PREFIX) GMP_PREFIX=$(DEF_PREFIX) NTL_THREADS=on NTL_THREAD_BOOST=on NTL_GMP_LIP=on NATIVE=off CXX=$CPPcompiler
     make CXX=$CPPcompiler CXXFLAGS="-fPIC -O3"
     make install
     echo "Installing $NTL... (DONE)"
