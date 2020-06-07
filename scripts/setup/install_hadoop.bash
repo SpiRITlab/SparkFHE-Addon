@@ -13,8 +13,8 @@ function add_property {
     value=$2
     file=$3
 
- 	xmlstarlet ed -L \
-        -s '/configuration' -t elem -n property --var new-field '\$prev' \
+    xmlstarlet ed -L \
+    	-s '/configuration' -t elem -n property --var new-field '\$prev' \
         -s '\$new-field' -t elem -n name -v $name \
         -s '\$new-field' -t elem -n value -v $value \
         $file
@@ -38,7 +38,7 @@ else
 	cd $HADOOP_FOLDER_NAME
 fi
 
-bash start-build-env.sh mvn package -Pdist,native -DskipTests -Dtar
+bash start-build-env.sh sudo mvn package -Pdist,native -DskipTests -Dtar
 
 tar -xzf hadoop-dist/target/$HADOOP_FOLDER_NAME-$HADOOP_VERSION.tar.gz -C $INSTALLATION_PATH/
 ln -s $INSTALLATION_PATH/$HADOOP_FOLDER_NAME-$HADOOP_VERSION $INSTALLATION_PATH/$HADOOP_FOLDER_NAME
@@ -94,7 +94,7 @@ add_property mapreduce.jobhistory.address \
 	$PropertyXMLFile
 
 
-rm -p $HADOOP_HOME/etc/hadoop/workers
+rm -rf $HADOOP_HOME/etc/hadoop/workers
 for i in $(seq 1 $NUM_OF_WORKERS); do 
 	echo "worker$i" >> $HADOOP_HOME/etc/hadoop/workers
 done
