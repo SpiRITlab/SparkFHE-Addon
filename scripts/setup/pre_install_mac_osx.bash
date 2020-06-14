@@ -12,12 +12,11 @@ brew update
 echo "Instalilng mac commandline tools (may ask for password)"
 xcode-select --install
 
-# The current version of gcc that homebrew installs is 8.2.0
-echo "Installing correct gcc version (8.2.0)"
-brew install gcc@8 pcre cmake maven
-brew tap caskroom/versions
-brew cask install java8
-echo "export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_91.jdk/Contents/Home/" >> /etc/bashrc
+echo "Installing correct gcc version 9.0"
+brew install gcc@9 pcre cmake maven
+brew install java11
+ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
+echo "export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-11.jdk/Contents/Home/" >> /etc/bashrc
 
 echo "Installing Python-pip"
 curl 'https://bootstrap.pypa.io/get-pip.py' > get-pip.py && sudo python get-pip.py
