@@ -25,7 +25,7 @@ Enable_HDFS=false       # add HDFS or not
 
 # Directories and files
 Marker=.install_ok              # marker to indicate whether a dependecy has installed properly
-PROJECT_ROOT=`pwd`
+PROJECT_ROOT=`pwd`/"../../../"
 DEPS_ROOT="$PROJECT_ROOT/deps"   # directory for installing dependencies
 CMAKE_EXE=cmake
 
