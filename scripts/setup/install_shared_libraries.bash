@@ -331,18 +331,39 @@ else
 fi
 
 
-CMAKE="CMAKE"
-CMAKE_EXE=$DEPS_bin/cmake
-if [ -d $CMAKE ]; then
-  if [ ! -f $CMAKE/$Marker ]; then
-    rm -rf $CMAKE # remove the folder
-    install_cmake
+installMinRequiredCmake() {
+  CMAKE="CMAKE"
+  CMAKE_EXE=$DEPS_bin/cmake
+  if [ -d $CMAKE ]; then
+    if [ ! -f $CMAKE/$Marker ]; then
+      rm -rf $CMAKE # remove the folder
+      install_cmake
+    else
+      echo "$CMAKE library already installed"
+    fi
   else
-    echo "$CMAKE library already installed"
+    install_cmake
+  fi
+}
+
+echo "Checking CMake version...(Minimum required version: $(echo $CMAKE_Version | cut -d'-' -f2))"
+if [ ! -z "$(cmake --version | grep 'version')" ]; then
+  installedCmakeVersion=$(cmake --version | grep 'version' | cut -d' ' -f3)
+  installedCmakeMajorVersion=$(echo $installedCmakeVersion | cut -d'.' -f1)
+  installedCmakeMinorVersion=$(echo $installedCmakeVersion | cut -d'.' -f2)
+  requiredMinCmakeMajorVersion=$(echo $CMAKE_Version | cut -d'-' -f2 | cut -d'.' -f1)
+  requiredMinCmakeMinorVersion=$(echo $CMAKE_Version | cut -d'-' -f2 | cut -d'.' -f2)
+  if [ "$installedCmakeMajorVersion" -lt "$requiredMinCmakeMajorVersion" ] \
+    || [ "$installedCmakeMinorVersion" -lt "$requiredMinCmakeMinorVersion" ]; then
+        echo "The installed version of CMake (current version: $installedCmakeVersion) is older than required. Perform install newer version."
+        installMinRequiredCmake
+  else
+        echo "Minimum requirement for CMake is satisfied! (Current Version: $installedCmakeVersion)"
   fi
 else
-  install_cmake
+  installMinRequiredCmake
 fi
+
 
 
 # Google Test is a unit testing library for the C++ programming language,
