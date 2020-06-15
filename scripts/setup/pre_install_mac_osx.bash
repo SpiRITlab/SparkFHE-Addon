@@ -16,7 +16,7 @@ echo "Installing correct gcc version 9.0"
 brew install gcc@9 pcre cmake maven
 brew install java11
 ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
-echo "export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-11.jdk/Contents/Home/" >> /etc/bashrc
+echo "export JAVA_HOME=$(/usr/libexec/java_home -v11)" >> ~/.zshrc
 
 echo "Installing Python-pip"
 curl 'https://bootstrap.pypa.io/get-pip.py' > get-pip.py && sudo python get-pip.py
