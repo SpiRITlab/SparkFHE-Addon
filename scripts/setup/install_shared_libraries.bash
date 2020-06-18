@@ -321,19 +321,10 @@ cd $DEPS_src
 
 export LD_LIBRARY_PATH=$DEPS_lib
 
-# determine whether this script is ran inside a docker container
-if [ ! -f "/proc/1/cgroup" ] || [ "$(grep 'docker\|lxc' /proc/1/cgroup)" == "" ] ; then
-  # if not, install dependencies into a self-contained folder
-  DEPS_ROOT=$DEPS_ROOT
-  CMAKE_EXE=$DEPS_bin/cmake
-else
-  # if docker container, install dependencies into /usr/local
-  DEPS_ROOT=/usr/local
-  CMAKE_EXE=cmake
-fi
 
 installMinRequiredCmake() {
   CMAKE="CMAKE"
+  CMAKE_EXE=$DEPS_bin/cmake
   if [ -d $CMAKE ]; then
     if [ ! -f $CMAKE/$Marker ]; then
       rm -rf $CMAKE # remove the folder
