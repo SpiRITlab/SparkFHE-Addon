@@ -1,1 +1,9 @@
-{"PlaintextModule": 73, "Lifting": 1, "ModuleChainLevel": 10, "KeySwitchingMatricesColumns": 2, "SecKeyHammingWeight": 64, "FieldExtensionDegree": 1, "SecurityParameter": 80, "Slot": 0, "nSlot": 174}
+{
+  "SchemeType": "BGV",
+  "PlaintextModulus": 5059,
+  "Lifting": 1,
+  "ModulusChainLevel": 10,
+  "SecurityParameter": 80,
+  "Slot": 0
+}
+
