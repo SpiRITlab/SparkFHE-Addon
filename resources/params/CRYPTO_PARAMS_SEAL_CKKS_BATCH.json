@@ -1,0 +1,8 @@
+{
+  "SchemeType": "CKKS",
+  "PolyModulusDegree": 8192,
+  "PlaintextModulus": 0,
+  "CoeffModulusPrimes": [0],
+  "CoeffModulusBits": [60, 30, 30, 30, 60],
+  "Scale": 1073741824
+}
