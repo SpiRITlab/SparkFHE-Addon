@@ -73,22 +73,22 @@ fi
 export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m"
 
 
-# run basic operations without SparkFHE stuffs
-echo "========================================================="
-echo "Starting spiritlab.sparkfhe.example.basic.BasicExample..."
-echo "========================================================="
-run_spark_submit_command  sparkfhe_basic_examples  spiritlab.sparkfhe.example.basic.BasicExample
+# Test whether we can load the libSparkFHE shared library correctly.
+echo "===================================================================="
+echo "Starting spiritlab.sparkfhe.example.TestConnectionToSharedLibrary..."
+echo "===================================================================="
+run_spark_submit_command  sparkfhe_basic_examples  spiritlab.sparkfhe.example.TestConnectionToSharedLibrary
 
 
 # generate example key pairs
 read -p "Do you want to run KeyGenExample? (y/n/q)" ynq
-echo "=========================================================="
-echo "Starting spiritlab.sparkfhe.example.basic.KeyGenExample..."
-echo "=========================================================="
+echo "============================================================="
+echo "Starting spiritlab.sparkfhe.example.batching.KeyGenExample..."
+echo "============================================================="
 case $ynq in
 	[Yy]* ) 
 		mkdir -p $SparkFHE_distribution/gen/keys
-		run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample local;;
+		run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.batching.KeyGenExample local SEAL CKKS;;
     [Nn]* ) 
 		echo "Skip to the next job.";;
 	[Qq]* )
@@ -100,13 +100,13 @@ esac
 
 # generate example ciphertexts
 read -p "Do you want to run EncDecExample? (y/n/q)" ynq
-echo "=========================================================="
-echo "Starting spiritlab.sparkfhe.example.basic.EncDecExample..."
-echo "=========================================================="
+echo "============================================================="
+echo "Starting spiritlab.sparkfhe.example.batching.EncDecExample..."
+echo "============================================================="
 case $ynq in
 	[Yy]* ) 
 		mkdir -p $SparkFHE_distribution/gen/records
-		run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample local \
+		run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.batching.EncDecExample local SEAL CKKS \
 				"gen/keys/my_public_key.txt" \
 				"gen/keys/my_secret_key.txt";;
     [Nn]* ) 
@@ -120,12 +120,12 @@ esac
 
 # run basic FHE arithmetic operation over encrypted data
 read -p "Do you want to run BasicOPsExample? (y/n/q)" ynq
-echo "============================================================"
-echo "Starting spiritlab.sparkfhe.example.basic.BasicOPsExample..."
-echo "============================================================"
+echo "==============================================================="
+echo "Starting spiritlab.sparkfhe.example.batching.BasicOPsExample..."
+echo "==============================================================="
 case $ynq in
 	[Yy]* ) 
-		run_spark_submit_command  sparkfhe_basic_OPs_examples  spiritlab.sparkfhe.example.basic.BasicOPsExample local \
+		run_spark_submit_command  sparkfhe_basic_OPs_examples  spiritlab.sparkfhe.example.batching.BasicOPsExample local SEAL CKKS \
 			"gen/keys/my_public_key.txt" \
 			"gen/keys/my_secret_key.txt";;
     [Nn]* ) 
@@ -139,12 +139,12 @@ esac
 
 # run FHE dot product over two encrypted vectors
 read -p "Do you want to run DotProductExample? (y/n/q)" ynq
-echo "=============================================================="
-echo "Starting spiritlab.sparkfhe.example.basic.DotProductExample..."
-echo "=============================================================="
+echo "================================================================="
+echo "Starting spiritlab.sparkfhe.example.batching.DotProductExample..."
+echo "================================================================="
 case $ynq in
 	[Yy]* ) 
-		run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample local \
+		run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.batching.DotProductExample local SEAL CKKS \
 			"gen/keys/my_public_key.txt" \
 			"gen/keys/my_secret_key.txt";;
     [Nn]* ) 
@@ -156,7 +156,23 @@ case $ynq in
 esac
 
 
-
+# run FHE total sum over vectors and matrices
+read -p "Do you want to run TotalSumExample? (y/n/q)" ynq
+echo "==============================================================="
+echo "Starting spiritlab.sparkfhe.example.batching.TotalSumExample..."
+echo "==============================================================="
+case $ynq in
+	[Yy]* ) 
+		run_spark_submit_command  sparkfhe_total_sum_examples  spiritlab.sparkfhe.example.batching.TotalSumExample local SEAL CKKS \
+			"gen/keys/my_public_key.txt" \
+			"gen/keys/my_secret_key.txt";;
+    [Nn]* ) 
+		echo "Skip to the next job.";;
+	[Qq]* )
+		exit;;
+    * ) 
+		echo "Please answer yes (y), no (n), or quit (q).";;
+esac
 
 
 # put back the environment variable
