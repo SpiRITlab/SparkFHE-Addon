@@ -14,9 +14,30 @@ HADOOP_Version=hadoop-2.9.2
 SEAL_Version=3.5.1
 HElib_Version=v1.0.1
 
-# Set compiler version
-CCcompiler=gcc-9
-CPPcompiler=g++-9
+set_compilers() {
+  GCCCompilers=$1
+  if [ -z "$GCCCompilers" ] ; then
+    echo "Please install GCC-9 or above."
+    exit 1
+  else
+    LatestGCCVersionNum=$(printf "%d\n" "${GCCCompilers[@]}" | sort -rn | head -1)
+    # Set compiler version
+    CCcompiler=gcc-$LatestGCCVersionNum
+    CPPcompiler=g++-$LatestGCCVersionNum
+    echo "Set GCC and G++ compiler to $CCcompiler and $CPPcompiler."
+  fi
+}
+
+OS=$(uname -s)
+if [[ "$OS" == "Darwin" ]] ; then
+  GCCCompilers=($(ls /usr/local/bin/g++-* | cut -d'-' -f2))
+elif [[ "$OS" == "Linux" ]] ; then
+  GCCCompilers=($(ls /usr/bin/g++-* | cut -d'-' -f2))
+else
+  echo 'Unsupported OS'
+  exit 1
+fi
+set_compilers $GCCCompilers
 
 ### Optional packages
 Enable_AWSS3=false      # add AWSS3 or not
