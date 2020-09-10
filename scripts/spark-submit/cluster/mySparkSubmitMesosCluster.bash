@@ -10,7 +10,7 @@ fi
 # uncomment the following if verbose mode is needed
 #verbose="--verbose"
 
-ProjectRoot=../../..
+ProjectRoot=../../../..
 cd $ProjectRoot
 
 SparkFHE_Addon_name="SparkFHE-Addon"

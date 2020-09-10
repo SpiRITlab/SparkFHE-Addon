@@ -6,7 +6,7 @@
 # uncomment the following if verbose mode is needed
 #verbose="--verbose"
 
-ProjectRoot=../../..
+ProjectRoot=../../../..
 cd $ProjectRoot
 
 SparkFHE_distribution=`pwd`
@@ -27,7 +27,7 @@ log4j_file=$SparkFHE_distribution/$SparkFHE_Addon_name/resources/config/log4j.pr
 jar_sparkfhe_examples=$SparkFHE_distribution/examples/jars/$(ls examples/jars | grep sparkfhe-examples-)
 jar_sparkfhe_api=$SparkFHE_distribution/jars/$(ls jars | grep sparkfhe-api-)
 jar_sparkfhe_plugin=$SparkFHE_distribution/jars/$(ls jars | grep spark-fhe)
-libSparkFHE_path=$SparkFHE_distribution/deps/lib:$HADOOP_HOME/lib/native:/usr/local/lib:/usr/local/hadoop/lib/native
+libSparkFHE_path=$SparkFHE_distribution/deps/lib:$HADOOP_HOME/lib/native
 java_class_path=.:$SparkFHE_distribution/jars
 
 mkdir -p /tmp/spark-events
