@@ -5,7 +5,7 @@ Scripts_Dir=$(dirname $Current_Dir)
 source "$Scripts_Dir/cloudlab/include_functions.bash" "$Scripts_Dir"
 
 default_master_node_ip=128.105.145.139
-default_sparkfhe_path=/spark-3.0.0-SNAPSHOT-bin-SparkFHE
+default_sparkfhe_path=/spark-3.1.0-SNAPSHOT-bin-SparkFHE
 
 
 function init_master() {
@@ -23,7 +23,7 @@ function init_master() {
 		sudo systemctl restart mesos-master.service && \
 		sudo systemctl restart zookeeper.service && \
 		sudo systemctl restart spark && \
-		sudo /spark-3.0.0-SNAPSHOT-bin-SparkFHE/hadoop/sbin/stop-dfs.sh && \
+		sudo $default_sparkfhe_path/hadoop/sbin/stop-dfs.sh && \
 		sudo rm -rf /hdfs/* && \
 		sudo $default_sparkfhe_path/hadoop/bin/hdfs namenode -format && \
 		sudo $default_sparkfhe_path/hadoop/sbin/start-dfs.sh && \

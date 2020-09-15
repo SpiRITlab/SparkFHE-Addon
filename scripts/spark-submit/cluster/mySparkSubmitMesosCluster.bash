@@ -14,7 +14,7 @@ ProjectRoot=../../../..
 cd $ProjectRoot
 
 SparkFHE_Addon_name="SparkFHE-Addon"
-SparkFHE_distribution="/spark-3.0.0-SNAPSHOT-bin-SparkFHE"
+SparkFHE_distribution="/spark-3.1.0-SNAPSHOT-bin-SparkFHE"
 HADOOP_HOME=$SparkFHE_distribution/hadoop
 
 
@@ -73,7 +73,7 @@ function run_spark_submit_command() {
 		--conf spark.executor.extraJavaOptions="-Djava.library.path=$libSparkFHE_path -Dlog4j.configuration=$log4j_file"  \
         --conf spark.mesos.executor.home=$SparkFHE_distribution \
         --conf spark.executorEnv.MESOS_NATIVE_JAVA_LIBRARY=/usr/local/lib/libmesos.so \
-		$jar_sparkfhe_examples $3 $4 $5 $6 $7
+		$jar_sparkfhe_examples $3 $4 $5 $6 $7 $8 $9
 }
 
 
@@ -81,22 +81,22 @@ function run_spark_submit_command() {
 export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m"
 
 
-echo "========================================================="
-echo "Starting spiritlab.sparkfhe.example.basic.BasicExample..."
-echo "========================================================="
+echo "===================================================================="
+echo "Starting spiritlab.sparkfhe.example.TestConnectionToSharedLibrary..."
+echo "===================================================================="
 # run basic operations without SparkFHE stuffs
-run_spark_submit_command  sparkfhe_basic_examples  spiritlab.sparkfhe.example.basic.BasicExample
+run_spark_submit_command  TestConnectionToSharedLibrary  spiritlab.sparkfhe.example.TestConnectionToSharedLibrary
 
 
 
-echo "=========================================================="
-echo "Starting spiritlab.sparkfhe.example.basic.KeyGenExample..."
-echo "=========================================================="
+echo "================================================================"
+echo "Starting spiritlab.sparkfhe.example.nonbatching.KeyGenExample..."
+echo "================================================================"
 # generate example key pairs
-read -p "Do you want to run KeyGenExample? (y/n)" yn
-case $yn in
+read -p "Do you want to run KeyGenExample? (y/n/q)" ynq
+case $ynq in
 	[Yy]* ) 
-		run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.basic.KeyGenExample 1 $HDFS_HOST
+		run_spark_submit_command  sparkfhe_keygen  spiritlab.sparkfhe.example.nonbatching.KeyGenExample 1 $HDFS_HOST HELIB BGV
 		while true; do
     		read -p "Check http://$1:5050 --- Has KeyGenExample finished? (y/n/q)" ynq
     		case $ynq in
@@ -109,6 +109,8 @@ case $yn in
 	;;
     [Nn]* ) 
 		echo "Skip to the next job.";;
+	[Qq]* )
+		exit;;
     * ) 
 		echo "Please answer yes (y) or no (n).";;
 esac
@@ -117,14 +119,14 @@ esac
 
 
 
-echo "=========================================================="
-echo "Starting spiritlab.sparkfhe.example.basic.EncDecExample..."
-echo "=========================================================="
+echo "================================================================"
+echo "Starting spiritlab.sparkfhe.example.nonbatching.EncDecExample..."
+echo "================================================================"
 # generate example ciphertexts
-read -p "Do you want to run EncDecExample? (y/n)" yn
-case $yn in
+read -p "Do you want to run EncDecExample? (y/n/q)" ynq
+case $ynq in
 	[Yy]* ) 
-		run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.basic.EncDecExample 1 $HDFS_HOST \
+		run_spark_submit_command  sparkfhe_encryption_decryption  spiritlab.sparkfhe.example.nonbatching.EncDecExample 1 $HDFS_HOST HELIB BGV \
 				"$HDFS_URL/gen/keys/my_public_key.txt" \
 				"$HDFS_URL/gen/keys/my_secret_key.txt"
 		while true; do
@@ -139,49 +141,72 @@ case $yn in
 	;;
     [Nn]* ) 
 		echo "Skip to the next job.";;
+	[Qq]* )
+		exit;;
     * ) 
 		echo "Please answer yes (y) or no (n).";;
 esac
 
 
 
-echo "============================================================"
-echo "Starting spiritlab.sparkfhe.example.basic.BasicOPsExample..."
-echo "============================================================"
+echo "=================================================================="
+echo "Starting spiritlab.sparkfhe.example.nonbatching.BasicOPsExample..."
+echo "=================================================================="
 # run basic FHE arithmetic operation over encrypted data
-read -p "Do you want to run BasicOPsExample? (y/n)" yn
-case $yn in
+read -p "Do you want to run BasicOPsExample? (y/n/q)" ynq
+case $ynq in
 	[Yy]* ) 
-		run_spark_submit_command  sparkfhe_basic_OPs_examples  spiritlab.sparkfhe.example.basic.BasicOPsExample 2 $HDFS_HOST \
+		run_spark_submit_command  sparkfhe_basic_OPs_examples  spiritlab.sparkfhe.example.nonbatching.BasicOPsExample 2 $HDFS_HOST HELIB BGV \
 			"$HDFS_URL/gen/keys/my_public_key.txt" \
 			"$HDFS_URL/gen/keys/my_secret_key.txt"
 	;;
     [Nn]* ) 
 		echo "Skip to the next job.";;
+	[Qq]* )
+		exit;;
     * ) 
 		echo "Please answer yes (y) or no (n).";;
 esac
 
 
 
-echo "=============================================================="
-echo "Starting spiritlab.sparkfhe.example.basic.DotProductExample..."
-echo "=============================================================="
+echo "===================================================================="
+echo "Starting spiritlab.sparkfhe.example.nonbatching.DotProductExample..."
+echo "===================================================================="
 # run FHE dot product over two encrypted vectors
-read -p "Do you want to run DotProductExample? (y/n)" yn
-case $yn in
+read -p "Do you want to run DotProductExample? (y/n/q)" ynq
+case $ynq in
 	[Yy]* ) 
-run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.basic.DotProductExample 2 $HDFS_HOST \
+run_spark_submit_command  sparkfhe_dot_product_examples  spiritlab.sparkfhe.example.nonbatching.DotProductExample 2 $HDFS_HOST HELIB BGV \
 	"$HDFS_URL/gen/keys/my_public_key.txt" \
 	"$HDFS_URL/gen/keys/my_secret_key.txt"
 ;;
     [Nn]* ) 
 		echo "Skip to the next job.";;
+	[Qq]* )
+		exit;;
     * ) 
 		echo "Please answer yes (y) or no (n).";;
 esac
 
 
+# run FHE total sum over vectors and matrices
+read -p "Do you want to run TotalSumExample? (y/n/q)" ynq
+echo "=================================================================="
+echo "Starting spiritlab.sparkfhe.example.nonbatching.TotalSumExample..."
+echo "=================================================================="
+case $ynq in
+	[Yy]* ) 
+		run_spark_submit_command  sparkfhe_total_sum_examples  spiritlab.sparkfhe.example.nonbatching.TotalSumExample 2 $HDFS_HOST HELIB BGV \
+			"$HDFS_URL/gen/keys/my_public_key.txt" \
+			"$HDFS_URL/gen/keys/my_secret_key.txt";;
+    [Nn]* ) 
+		echo "Skip to the next job.";;
+	[Qq]* )
+		exit;;
+    * ) 
+		echo "Please answer yes (y), no (n), or quit (q).";;
+esac
 
 
 

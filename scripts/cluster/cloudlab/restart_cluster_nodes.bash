@@ -4,7 +4,7 @@ Current_Dir=`pwd`
 Scripts_Dir=$(dirname $Current_Dir)
 source "$Scripts_Dir/cloudlab/include_functions.bash" "$Scripts_Dir"
 
-default_sparkfhe_path=/spark-3.0.0-SNAPSHOT-bin-SparkFHE
+default_sparkfhe_path=/spark-3.1.0-SNAPSHOT-bin-SparkFHE
 
 
 function init_master() {
