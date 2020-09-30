@@ -11,7 +11,8 @@ function init_master() {
 	# update ip address on mesos master and restart services
 	$SSH $MyUserName@${cluster_nodes_ip[0]} "
 		cd $default_sparkfhe_path/SparkFHE-Addon && sudo git pull && \
-		sudo bash $default_sparkfhe_path/SparkFHE-Addon/scripts/cluster/mesos_cluster_management/restartMesosMaster.bash" 
+		sudo bash $default_sparkfhe_path/SparkFHE-Addon/scripts/cluster/mesos_cluster_management/restartMesosMaster.bash && \
+		sudo bash $default_sparkfhe_path/SparkFHE-Addon/scripts/cluster/mesos_cluster_management/restartHDFSMaster.bash" 
 }
 
 
