@@ -1,9 +1,9 @@
 {
   "SchemeType": "BGV",
-  "PlaintextModulus": 331,
+  "PlaintextModulus": 1032193,
   "Lifting": 1,
-  "ModulusChainLevel": 20,
-  "SecurityParameter": 80,
+  "ModulusChainLevel": 12,
+  "SecurityParameter": 128,
   "Slot": 0,
-  "SpecifiedM": 2047
+  "SpecifiedM": 5461
 }

@@ -2,9 +2,8 @@
   "SchemeType": "CKKS",
   "PlaintextModulus": -1,
   "Lifting": 20,
-  "ModulusChainLevel": 12,
+  "ModulusChainLevel": 8,
   "KeySwitchingMatricesColumns": 2,
-  "SecurityParameter": 80,
-  "SpecifiedM": 1024,
-  "scale": 4
+  "SecurityParameter": 128,
+  "SpecifiedM": 16382
 }

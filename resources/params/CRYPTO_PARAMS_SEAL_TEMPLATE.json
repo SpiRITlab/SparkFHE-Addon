@@ -1,8 +1,8 @@
 {
   "SchemeType": "BFV",
-  "PolyModulusDegree": 4096,
-  "PlaintextModulus": 5059,
+  "PolyModulusDegree": 8192,
+  "PlaintextModulus": 1032193,
   "CoeffModulusPrimes": [0],
-  "CoeffModulusBits": [0],
+  "CoeffModulusBits": [60, 40, 40, 60],
   "Scale": 1073741824
 }
