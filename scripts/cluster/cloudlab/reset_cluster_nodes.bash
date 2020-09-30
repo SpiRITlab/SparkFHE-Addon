@@ -10,15 +10,12 @@ default_sparkfhe_path=/spark-3.1.0-SNAPSHOT-bin-SparkFHE
 function init_master() {
 	# update ip address on mesos master and restart services
 	$SSH $MyUserName@${cluster_nodes_ip[0]} "
-		sudo systemctl daemon-reload && \
-		sudo systemctl restart mesos-master.service && \
-		sudo systemctl restart zookeeper.service && \
-		sudo systemctl restart spark && \
+		cd $default_sparkfhe_path/SparkFHE-Addon && sudo git pull && \
+		sudo bash $default_sparkfhe_path/SparkFHE-Addon/scripts/cluster/mesos_cluster_management/restartMesosMaster.bash && \
 		sudo $default_sparkfhe_path/hadoop/sbin/stop-dfs.sh && \
 		sudo rm -rf /hdfs/* && \
 		sudo $default_sparkfhe_path/hadoop/bin/hdfs namenode -format && \
-		sudo $default_sparkfhe_path/hadoop/sbin/start-dfs.sh && \
-		cd $default_sparkfhe_path/SparkFHE-Addon && sudo git pull" 
+		sudo $default_sparkfhe_path/hadoop/sbin/start-dfs.sh" 
 }
 
 
@@ -30,11 +27,9 @@ function init_worker() {
 
 		# configure mesos master stuffs and restart services
 		$SSH $MyUserName@${cluster_nodes_ip[idx]} "
-			sudo systemctl daemon-reload && \
-			sudo systemctl restart mesos-slave.service && \
-			sudo rm -rf /hdfs/* && \
 			cd $default_sparkfhe_path/SparkFHE-Addon && sudo git pull && \
-			nohup bash $default_sparkfhe_path/sbin/start-history-server.sh &"
+			sudo rm -rf /hdfs/* && \
+			sudo bash $default_sparkfhe_path/SparkFHE-Addon/scripts/cluster/mesos_cluster_management/restartMesosWorker.bash"
 	done 
 }
 
