@@ -1,0 +1,26 @@
+#
+# Copyright SpiRITlab - The SparkFHE project.
+# https://github.com/SpiRITlab
+# 
+# Reference docker image, https://hub.docker.com/repository/docker/sparkfhe/sparkfhe-standalone
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: sparkfhe-demo
+spec:
+  selector:
+    matchLabels:
+      app: sparkfhe-demo
+  replicas: 1 # tells deployment to run 1 pod
+  template:
+    metadata:
+      labels:
+        app: sparkfhe-demo
+    spec:
+      containers:
+      - name: sparkfhe-demo
+        image: sparkfhe/sparkfhe-standalone:latest  # get docker image from docker hub
+        command: [ "sleep" ]
+        args: [ "infinity" ]
+        ports:
+        - containerPort: 9123
