@@ -12,16 +12,23 @@ kubectl apply -f sparkfhe-standalone.yaml
 ```bash
 kubectl get deployments
 ```
+
+Output 
+```
 NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
 sparkfhe-standalone   1/1     1            1           18s
-
+```
 
 #### To view pod
 ```bash
 kubectl get pods
 ```
+
+Output
+```
 NAME                                   READY   STATUS    RESTARTS   AGE
 sparkfhe-standalone-65b7889f6c-vnggf   1/1     Running   0          34s
+```
 
 #### To access the container
 ```bash 
